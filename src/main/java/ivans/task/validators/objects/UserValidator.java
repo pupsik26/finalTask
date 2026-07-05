@@ -3,7 +3,7 @@ package ivans.task.validators.objects;
 import ivans.task.common.classes.User;
 import ivans.task.exceptions.InvalidDataException;
 
-class UserValidator implements ObjectValidator<User> {
+class UserValidator implements TypeValidator<User> {
 
     static final int MIN_PASSWORD_LENGTH = 6;
 

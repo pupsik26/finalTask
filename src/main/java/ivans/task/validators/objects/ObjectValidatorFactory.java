@@ -5,13 +5,14 @@ import ivans.task.common.classes.Bus;
 import ivans.task.common.classes.Car;
 import ivans.task.common.classes.Student;
 import ivans.task.common.classes.User;
+import ivans.task.exceptions.InvalidDataException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ObjectValidatorFactory {
+public final class ObjectValidatorFactory implements ObjectValidator {
 
-    private static final Map<Class<?>, ObjectValidator<?>> validators = new HashMap<>();
+    private static final Map<Class<?>, TypeValidator<?>> validators = new HashMap<>();
 
     static {
         validators.put(Student.class, new StudentValidator());
@@ -21,14 +22,23 @@ public final class ObjectValidatorFactory {
         validators.put(User.class, new UserValidator());
     }
 
+    private static final ObjectValidator INSTANCE = new ObjectValidatorFactory();
+
     private ObjectValidatorFactory() {
     }
 
-    public static <T> ObjectValidator<T> getValidator(Class<T> type) {
-        ObjectValidator<?> validator = validators.get(type);
+    public static ObjectValidator getValidator() {
+        return INSTANCE;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void validate(Object object) throws InvalidDataException {
+        ValidationUtils.requireNonNull(object, "Object");
+        TypeValidator<Object> validator = (TypeValidator<Object>) validators.get(object.getClass());
         if (validator == null) {
-            throw new IllegalArgumentException("Нет валидатора для типа: " + type.getSimpleName());
+            throw new InvalidDataException("Нет валидатора для типа: " + object.getClass().getSimpleName());
         }
-        return (ObjectValidator<T>) validator;
+        validator.validate(object);
     }
 }

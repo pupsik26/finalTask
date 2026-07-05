@@ -3,7 +3,7 @@ package ivans.task.validators.objects;
 import ivans.task.common.classes.Barrel;
 import ivans.task.exceptions.InvalidDataException;
 
-class BarrelValidator implements ObjectValidator<Barrel> {
+class BarrelValidator implements TypeValidator<Barrel> {
 
     static final int MIN_VOLUME = 0;
     static final double MAX_VOLUME = 50_000;

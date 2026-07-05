@@ -2,6 +2,6 @@ package ivans.task.validators.objects;
 
 import ivans.task.exceptions.InvalidDataException;
 
-public interface ObjectValidator<T> {
-    void validate(T object) throws InvalidDataException;
+public interface ObjectValidator {
+    void validate(Object object) throws InvalidDataException;
 }

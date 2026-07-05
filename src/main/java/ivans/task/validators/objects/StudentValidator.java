@@ -3,7 +3,7 @@ package ivans.task.validators.objects;
 import ivans.task.common.classes.Student;
 import ivans.task.exceptions.InvalidDataException;
 
-class StudentValidator implements ObjectValidator<Student> {
+class StudentValidator implements TypeValidator<Student> {
 
     static final double MAX_GPA = 10;
     static final double MIN_GPA = 0;

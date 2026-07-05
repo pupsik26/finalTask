@@ -3,7 +3,7 @@ package ivans.task.validators.objects;
 import ivans.task.common.classes.Bus;
 import ivans.task.exceptions.InvalidDataException;
 
-class BusValidator implements ObjectValidator<Bus> {
+class BusValidator implements TypeValidator<Bus> {
 
     static final int MIN_NUMBER = 0;
     static final int MIN_MILEAGE = 0;

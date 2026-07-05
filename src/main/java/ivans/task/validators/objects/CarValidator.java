@@ -5,7 +5,7 @@ import ivans.task.exceptions.InvalidDataException;
 
 import java.time.Year;
 
-class CarValidator implements ObjectValidator<Car> {
+class CarValidator implements TypeValidator<Car> {
 
     static final int MIN_YEAR = 1900;
     static final int MIN_POWER = 0;
