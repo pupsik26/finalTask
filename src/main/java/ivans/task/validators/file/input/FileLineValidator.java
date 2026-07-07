@@ -4,7 +4,7 @@ import ivans.task.exceptions.InvalidFileFormatException;
 
 public final class FileLineValidator {
 
-    private static final String CSV_SEPARATOR = ",";
+    private static final String CSV_SEPARATOR = ";";
 
     private FileLineValidator() {}
 
