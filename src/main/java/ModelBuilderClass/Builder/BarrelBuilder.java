@@ -1,6 +1,6 @@
-package Builder;
+package ModelBuilderClass.Builder;
 
-import ModelClass.Barrel;
+import ModelBuilderClass.ModelClass.Barrel;
 
 public class BarrelBuilder extends Barrel {
 

@@ -1,6 +1,6 @@
-package Builder;
+package ModelBuilderClass.Builder;
 
-import ModelClass.User;
+import ModelBuilderClass.ModelClass.User;
 
 public class UserBuilder extends User {
 

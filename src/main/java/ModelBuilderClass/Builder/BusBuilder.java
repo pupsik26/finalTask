@@ -1,6 +1,6 @@
-package Builder;
+package ModelBuilderClass.Builder;
 
-import ModelClass.Bus;
+import ModelBuilderClass.ModelClass.Bus;
 
 public class  BusBuilder extends Bus {
 

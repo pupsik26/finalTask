@@ -1,4 +1,4 @@
-package ModelClass;
+package ModelBuilderClass.ModelClass;
 
 import java.util.Objects;
 

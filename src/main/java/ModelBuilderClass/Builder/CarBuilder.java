@@ -1,6 +1,6 @@
-package Builder;
+package ModelBuilderClass.Builder;
 
-import ModelClass.Car;
+import ModelBuilderClass.ModelClass.Car;
 
 public class CarBuilder extends Car {
 

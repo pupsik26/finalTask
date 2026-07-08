@@ -1,6 +1,6 @@
-package Builder;
+package ModelBuilderClass.Builder;
 
-import ModelClass.Student;
+import ModelBuilderClass.ModelClass.Student;
 
 public class StudentBuilder extends Student {
 
