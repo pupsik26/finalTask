@@ -1,21 +1,10 @@
-package ModelBuilderClass;
-
 import java.util.Objects;
 
 public class Barrel {
 
-    private final double volume;
-    private final String storedMaterial;
-    private final String material;
 
-    private Barrel(Builder builder) {
-        this.volume = builder.volume;
-        this.storedMaterial = builder.storedMaterial;
-        this.material = builder.material;
     }
 
-    public static Builder builder() {
-        return new Builder();
     }
 
     public double getVolume() {
@@ -49,29 +38,5 @@ public class Barrel {
     @Override
     public int hashCode() {
         return Objects.hash(volume, storedMaterial, material);
-    }
-
-    public static class Builder {
-        private double volume;
-        private String storedMaterial;
-        private String material;
-
-        public Builder() {
-        }
-
-        public Builder setVolume(double volume) {
-            this.volume = volume;
-            return this;
-        }
-
-        public Builder setStoredMaterial(String storedMaterial) {
-            this.storedMaterial = storedMaterial;
-            return this;
-        }
-
-        public Builder setMaterial(String material) {
-            this.material = material;
-            return this;
-        }
     }
 }
