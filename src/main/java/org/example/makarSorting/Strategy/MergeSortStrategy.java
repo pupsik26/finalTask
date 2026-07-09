@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class MergeSortStrategy<T> implements SortStrategy<T> {
+ class MergeSortStrategy<T> implements SortStrategy<T> {
 
-    public void mergeSort(List<T> list,
+    private void mergeSort(List<T> list,
                           int left,
                           int right,
                           Comparator<? super T> comparator) {

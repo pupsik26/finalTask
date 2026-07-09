@@ -8,11 +8,11 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class ComparatorRegister {
+class ComparatorRegister {
 
     private final Map<Class<?>, Map<String, Comparator<?>>> registry = Map.of(
             User.class, Map.of(
-                    "name", Comparator.comparing(User::getName),
+                    "name"  , Comparator.comparing(User::getName),
                     "password", Comparator.comparing(User::getPassword),
                     "email", Comparator.comparing(User::getEmail)
             ),

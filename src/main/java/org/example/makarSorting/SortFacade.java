@@ -13,6 +13,10 @@ public class SortFacade {
             Class<T> className,
             String fieldName) {
 
+        Objects.requireNonNull(list, "Список не должен быть null");
+        Objects.requireNonNull(className, "Класс не должен быть null");
+        Objects.requireNonNull(fieldName, "Имя поля не должно быть null");
+
         Comparator<T> comparator =
                 comparatorRegister
                         .findComparator(className, fieldName);

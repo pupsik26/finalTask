@@ -3,9 +3,9 @@ package Sort;
 import java.util.Comparator;
 import java.util.List;
 
-public class QuickSortStrategy<T> implements SortStrategy<T> {
+class QuickSortStrategy<T> implements SortStrategy<T> {
 
-    public void quickSort(List<T> list, int left, int right, Comparator<? super T> comparator) {
+    private void quickSort(List<T> list, int left, int right, Comparator<? super T> comparator) {
 
         if (left >= right) {
             return;
