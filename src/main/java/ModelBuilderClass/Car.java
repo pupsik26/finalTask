@@ -70,5 +70,8 @@ public class Car {
             this.year = year;
             return this;
         }
+        public Car build() {
+            return new Car(this);
+        }
     }
 }

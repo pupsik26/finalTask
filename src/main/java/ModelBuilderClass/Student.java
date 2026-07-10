@@ -73,5 +73,8 @@ public class Student {
             this.recordBookNumber = recordBookNumber;
             return this;
         }
+        public Student build() {
+            return new Student(this);
+        }
     }
 }

@@ -72,5 +72,8 @@ public class User {
             this.email = email;
             return this;
         }
+        public User build() {
+            return new User(this);
+        }
     }
 }
