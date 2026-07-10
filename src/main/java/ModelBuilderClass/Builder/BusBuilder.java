@@ -8,7 +8,7 @@ public class  BusBuilder extends Bus {
         super();
     }
 
-    public BusBuilder setNumber(String number) {
+    public BusBuilder setNumber(int number) {
         this.number = number;
         return this;
     }
@@ -20,6 +20,10 @@ public class  BusBuilder extends Bus {
 
     public BusBuilder setMileage(int mileage) {
         this.mileage = mileage;
+        return this;
+    }
+
+    public Bus build() {
         return this;
     }
 }

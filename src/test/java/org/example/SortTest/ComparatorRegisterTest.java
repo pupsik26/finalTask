@@ -1,5 +1,5 @@
 import Model.User;
-import Sort.ComparatorRegister;
+import org.example.makarSorting.ComparatorRegister;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;

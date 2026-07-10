@@ -1,52 +1,43 @@
 package ui;
 
-import com.sorting.data.DataSource;
-import com.sorting.data.DataSourceFactory;
-import com.sorting.factory.SortableFactory;
-import com.sorting.model.Sortable;
-import com.sorting.sorting.BubbleSortStrategy;
-import com.sorting.sorting.MergeSortStrategy;
-import com.sorting.sorting.QuickSortStrategy;
-import com.sorting.sorting.SortContext;
-import com.sorting.sorting.SortStrategy;
-import ui.CommandParser.CommandParseException;
+import ModelBuilderClass.Builder.*;
+import ModelBuilderClass.ModelClass.*;
+import ivans.task.validators.objects.ObjectValidator;
+import ivans.task.validators.objects.ObjectValidatorFactory;
+import org.example.makarSorting.SortFacade;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
  * Консольный интерфейс пользователя.
- * Поддерживает два режима работы:
- * <ul>
- *   <li>Интерактивный — пошаговый выбор через меню</li>
- *   <li>Командный — ввод команды целиком с флагами</li>
- * </ul>
+ * Интегрируется с SortFacade для сортировки.
  */
 public class ConsoleUI {
 
     private final Scanner scanner;
-    private final InputValidator inputValidator;
+    private final ObjectValidator validator;
+    private final SortFacade sortFacade;
+    private final Random random;
 
     // Состояние приложения
     private int selectedClassType;
     private int selectedDataSourceType;
     private int collectionSize;
     private int selectedFieldIndex;
-    private int selectedAlgorithmType;
     private String filePath;
-    private List<Sortable> currentData;
+    private List<Object> currentData;
 
     public ConsoleUI(Scanner scanner) {
         this.scanner = scanner;
-        this.inputValidator = new InputValidator(scanner);
+        this.validator = ObjectValidatorFactory.getValidator();
+        this.sortFacade = new SortFacade();
+        this.random = new Random();
         this.currentData = new ArrayList<>();
     }
 
-    /**
-     * Запускает главный цикл программы.
-     */
     public void run() {
         printWelcomeMessage();
 
@@ -54,20 +45,15 @@ public class ConsoleUI {
 
         while (isRunning) {
             MenuPrinter.printMainMenu(
-                    selectedClassType,
-                    selectedDataSourceType,
-                    collectionSize,
-                    selectedFieldIndex,
-                    selectedAlgorithmType
+                    selectedClassType, selectedDataSourceType,
+                    collectionSize, selectedFieldIndex
             );
             MenuPrinter.printCommandHint();
 
             System.out.print("\n> ");
             String rawInput = scanner.nextLine().trim();
 
-            if (rawInput.isEmpty()) {
-                continue;
-            }
+            if (rawInput.isEmpty()) continue;
 
             if (isCommandMode(rawInput)) {
                 isRunning = handleCommand(rawInput);
@@ -77,18 +63,10 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Определяет, является ли ввод командой (содержит буквы) или цифрой меню.
-     */
     private boolean isCommandMode(String input) {
         return !input.matches("^\\d+$");
     }
 
-    /**
-     * Обработка команды.
-     *
-     * @return false если нужно выйти из программы
-     */
     private boolean handleCommand(String rawInput) {
         try {
             Command command = CommandParser.parse(rawInput);
@@ -99,7 +77,7 @@ public class ConsoleUI {
             }
 
             if (command.isExit()) {
-                printFarewellMessage();
+                System.out.println("\nДо свидания!");
                 return false;
             }
 
@@ -117,26 +95,21 @@ public class ConsoleUI {
             MenuPrinter.printInfo("Введите 'help' для справки");
             return true;
 
-        } catch (CommandParseException e) {
+        } catch (CommandParser.CommandParseException e) {
             MenuPrinter.printError(e.getMessage());
-            MenuPrinter.printInfo("Введите 'help' для справки по командам");
+            MenuPrinter.printInfo("Введите 'help' для справки");
             return true;
         }
     }
 
-    /**
-     * Обработка команды start.
-     * Применяет флаги к текущему состоянию и запускает сортировку.
-     */
     private boolean handleStartCommand(Command command) {
         command.getClassType().ifPresent(v -> selectedClassType = v);
         command.getDataSourceType().ifPresent(v -> selectedDataSourceType = v);
         command.getCollectionSize().ifPresent(v -> collectionSize = v);
         command.getFieldIndex().ifPresent(v -> selectedFieldIndex = v);
-        command.getAlgorithmType().ifPresent(v -> selectedAlgorithmType = v);
         command.getFilePath().ifPresent(v -> filePath = v);
 
-        if (!validateAllParametersInteractive()) {
+        if (!validateParametersInteractive()) {
             return true;
         }
 
@@ -144,77 +117,52 @@ public class ConsoleUI {
         return true;
     }
 
-    /**
-     * Интерактивно запрашивает недостающие параметры.
-     *
-     * @return true если все параметры заполнены
-     */
-    private boolean validateAllParametersInteractive() {
-        if (selectedClassType == 0) {
-            MenuPrinter.printInfo("Не выбран класс. Выберите:");
-            MenuPrinter.printClassSelectionMenu();
-            selectedClassType = inputValidator.getIntInRange("Класс (1-5): ", 1, 5);
-        }
-
-        if (selectedDataSourceType == 0) {
-            MenuPrinter.printInfo("Не выбран источник данных. Выберите:");
-            MenuPrinter.printDataSourceMenu();
-            selectedDataSourceType = inputValidator.getIntInRange("Источник (1-3): ", 1, 3);
-        }
-
-        if (collectionSize == 0) {
-            collectionSize = inputValidator.getPositiveInt("Размер коллекции (1-10000): ", 10000);
-        }
-
-        if (selectedFieldIndex == 0) {
-            MenuPrinter.printInfo("Не выбрано поле. Выберите:");
-            MenuPrinter.printFieldSelectionMenu(selectedClassType);
-            selectedFieldIndex = inputValidator.getIntInRange("Поле (1-3): ", 1, 3);
-        }
-
-        if (selectedAlgorithmType == 0) {
-            MenuPrinter.printInfo("Не выбран алгоритм. Выберите:");
-            MenuPrinter.printAlgorithmMenu();
-            selectedAlgorithmType = inputValidator.getIntInRange("Алгоритм (1-3): ", 1, 3);
-        }
-
-        return true;
-    }
-
-    /**
-     * Обработка выбора пункта меню (цифра).
-     *
-     * @return false если нужно выйти
-     */
     private boolean handleMenuChoice(String input) {
         try {
             int choice = Integer.parseInt(input);
 
             return switch (choice) {
-                case 1 -> { handleClassSelection(); yield true; }
-                case 2 -> { handleDataSourceSelection(); yield true; }
-                case 3 -> { handleCollectionSizeSelection(); yield true; }
-                case 4 -> { handleFieldSelection(); yield true; }
-                case 5 -> { handleAlgorithmSelection(); yield true; }
-                case 6 -> { handleSortExecution(); yield true; }
-                case 7 -> { printFarewellMessage(); yield false; }
+                case 1 -> {
+                    handleClassSelection();
+                    yield true;
+                }
+                case 2 -> {
+                    handleDataSourceSelection();
+                    yield true;
+                }
+                case 3 -> {
+                    handleCollectionSizeSelection();
+                    yield true;
+                }
+                case 4 -> {
+                    handleFieldSelection();
+                    yield true;
+                }
+                case 5 -> {
+                    handleSortExecution();
+                    yield true;
+                }
+                case 6 -> {
+                    System.out.println("\nДо свидания!");
+                    yield false;
+                }
                 default -> {
-                    MenuPrinter.printError("Выберите пункт от 1 до 7");
+                    MenuPrinter.printError("Выберите пункт от 1 до 6");
                     yield true;
                 }
             };
         } catch (NumberFormatException e) {
-            MenuPrinter.printError("Неверный ввод. Введите цифру (1-7) или команду (help, start, exit)");
+            MenuPrinter.printError("Неверный ввод. Введите цифру или команду");
             return true;
         }
     }
 
     private void handleClassSelection() {
         MenuPrinter.printClassSelectionMenu();
-        selectedClassType = inputValidator.getIntInRange("Выберите класс (1-5): ", 1, 5);
+        selectedClassType = getIntInRange("Выберите класс (1-5): ", 1, 5);
         selectedFieldIndex = 0;
         currentData.clear();
-        MenuPrinter.printSuccess("Выбран класс: " + SortableFactory.getClassName(selectedClassType));
+        MenuPrinter.printSuccess("Выбран класс: " + (MenuPrinter.class.getDeclaredMethods().length > 0));
     }
 
     private void handleDataSourceSelection() {
@@ -223,14 +171,17 @@ public class ConsoleUI {
             return;
         }
         MenuPrinter.printDataSourceMenu();
-        selectedDataSourceType = inputValidator.getIntInRange("Выберите источник (1-3): ", 1, 3);
+        selectedDataSourceType = getIntInRange("Выберите источник (1-3): ", 1, 3);
 
         if (selectedDataSourceType == 3) {
-            filePath = inputValidator.getFilePath("Введите путь к файлу: ");
+            System.out.print("Введите путь к файлу: ");
+            filePath = scanner.nextLine().trim();
         }
 
         currentData.clear();
-        MenuPrinter.printSuccess("Выбран источник: " + getDataSourceName(selectedDataSourceType));
+        MenuPrinter.printSuccess("Выбран источник: " +
+                (selectedDataSourceType == 1 ? "Ручной ввод" :
+                        selectedDataSourceType == 2 ? "Случайные данные" : "Из файла"));
     }
 
     private void handleCollectionSizeSelection() {
@@ -238,7 +189,7 @@ public class ConsoleUI {
             MenuPrinter.printError("Сначала выберите класс!");
             return;
         }
-        collectionSize = inputValidator.getPositiveInt("Введите размер коллекции (1-10000): ", 10000);
+        collectionSize = getIntInRange("Введите размер коллекции (1-10000): ", 1, 10000);
         currentData.clear();
         MenuPrinter.printSuccess("Размер коллекции: " + collectionSize);
     }
@@ -249,28 +200,17 @@ public class ConsoleUI {
             return;
         }
         MenuPrinter.printFieldSelectionMenu(selectedClassType);
-        selectedFieldIndex = inputValidator.getIntInRange("Выберите поле (1-3): ", 1, 3);
+        selectedFieldIndex = getIntInRange("Выберите поле (1-3): ", 1, 3);
 
-        String fieldName = SortableFactory.getFieldNames(selectedClassType)[selectedFieldIndex - 1];
+        String fieldName = getFieldName(selectedClassType, selectedFieldIndex);
         MenuPrinter.printSuccess("Выбрано поле: " + fieldName);
     }
 
-    private void handleAlgorithmSelection() {
-        MenuPrinter.printAlgorithmMenu();
-        selectedAlgorithmType = inputValidator.getIntInRange("Выберите алгоритм (1-3): ", 1, 3);
-        MenuPrinter.printSuccess("Выбран алгоритм: " + getAlgorithmName(selectedAlgorithmType));
-    }
-
     private void handleSortExecution() {
-        if (!validateAllParametersInteractive()) {
-            return;
-        }
+        if (!validateParametersInteractive()) return;
         executeSort();
     }
 
-    /**
-     * Выполнение сортировки (используется и в командном, и в интерактивном режиме).
-     */
     private void executeSort() {
         try {
             if (currentData.isEmpty()) {
@@ -282,38 +222,35 @@ public class ConsoleUI {
                 return;
             }
 
-            SortStrategy<Sortable> strategy = createSortStrategy();
-            SortContext<Sortable> sortContext = new SortContext<>(strategy);
+            String fieldName = getFieldName(selectedClassType, selectedFieldIndex);
+            Class<?> modelClass = getModelClass(selectedClassType);
 
-            Comparator<Sortable> comparator = createComparator();
+            MenuPrinter.printInfo("Начинаем сортировку...");
 
             long startTime = System.nanoTime();
-            sortContext.sort(currentData, comparator);
+
+            sortFacade.sort((List<Object>) currentData, modelClass, fieldName);
+
             long endTime = System.nanoTime();
-            double elapsedMs = (endTime - startTime) / 1_000_000.0;
 
-            String fieldName = SortableFactory.getFieldNames(selectedClassType)[selectedFieldIndex - 1];
-            String algorithmName = getAlgorithmName(selectedAlgorithmType);
-
-            MenuPrinter.printSortResults(currentData, fieldName, algorithmName);
-            System.out.printf("⏱ Время сортировки: %.3f мс%n%n", elapsedMs);
+            MenuPrinter.printSortResults(currentData, fieldName, endTime - startTime);
 
         } catch (Exception e) {
             MenuPrinter.printError("Ошибка при сортировке: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Загрузка данных из источника.
-     */
     private void loadData() {
         MenuPrinter.printInfo("Загрузка данных...");
 
         try {
-            DataSource<Sortable> dataSource = DataSourceFactory.createDataSource(
-                    selectedDataSourceType, selectedClassType);
-
-            currentData = dataSource.getData(collectionSize);
+            currentData = switch (selectedDataSourceType) {
+                case 1 -> loadManualData();
+                case 2 -> loadRandomData();
+                case 3 -> loadFileData();
+                default -> throw new IllegalStateException("Неизвестный источник: " + selectedDataSourceType);
+            };
 
             MenuPrinter.printSuccess("Загружено " + currentData.size() + " объектов");
 
@@ -323,41 +260,200 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Создание стратегии сортировки.
-     */
-    private SortStrategy<Sortable> createSortStrategy() {
-        return switch (selectedAlgorithmType) {
-            case 1 -> new BubbleSortStrategy<>();
-            case 2 -> new QuickSortStrategy<>();
-            case 3 -> new MergeSortStrategy<>();
-            default -> throw new IllegalStateException("Неизвестный алгоритм: " + selectedAlgorithmType);
+    private List<Object> loadManualData() throws Exception {
+        List<Object> data = new ArrayList<>();
+
+        System.out.println("\nВведите " + collectionSize + " объектов:");
+
+        for (int i = 0; i < collectionSize; i++) {
+            System.out.println("\n--- Объект " + (i + 1) + " ---");
+            Object obj = createObjectFromInput(selectedClassType);
+            validator.validate(obj);
+            data.add(obj);
+        }
+
+        return data;
+    }
+
+    private List<Object> loadRandomData() throws Exception {
+        List<Object> data = new ArrayList<>();
+
+        for (int i = 0; i < collectionSize; i++) {
+            Object obj = createRandomObject(selectedClassType);
+            validator.validate(obj);
+            data.add(obj);
+        }
+
+        return data;
+    }
+
+    private List<Object> loadFileData() {
+        // TODO: Реализуйте чтение из файла
+        MenuPrinter.printError("Чтение из файла пока не реализовано");
+        return new ArrayList<>();
+    }
+
+    private Object createObjectFromInput(int classType) {
+        return switch (classType) {
+            case 1 -> {
+                System.out.print("Имя: ");
+                String name = scanner.nextLine();
+                System.out.print("Пароль: ");
+                String password = scanner.nextLine();
+                System.out.print("Email: ");
+                String email = scanner.nextLine();
+                yield new UserBuilder().setName(name).setPassword(password).setEmail(email).build();
+            }
+            case 2 -> {
+                System.out.print("Группа: ");
+                String group = scanner.nextLine();
+                System.out.print("Средний балл: ");
+                double gpa = Double.parseDouble(scanner.nextLine());
+                System.out.print("Номер зачетки: ");
+                String bookNum = scanner.nextLine();
+                yield new StudentBuilder()
+                        .setGroupNumber(group)
+                        .setAverageGrade(gpa)
+                        .setRecordBookNumber(bookNum)
+                        .build();
+            }
+            case 3 -> {
+                System.out.print("Мощность: ");
+                int power = Integer.parseInt(scanner.nextLine());
+                System.out.print("Модель: ");
+                String model = scanner.nextLine();
+                System.out.print("Год: ");
+                int year = Integer.parseInt(scanner.nextLine());
+                yield new CarBuilder()
+                        .setPower(power)
+                        .setModel(model)
+                        .setYear(year)
+                        .build();
+            }
+            case 4 -> {
+                System.out.print("Номер: ");
+                int number = scanner.nextInt();
+                System.out.print("Модель: ");
+                String model = scanner.nextLine();
+                System.out.print("Пробег: ");
+                int mileage = Integer.parseInt(scanner.nextLine());
+                yield new BusBuilder()
+                        .setNumber(number)
+                        .setModel(model)
+                        .setMileage(mileage)
+                        .build();
+            }
+            case 5 -> {
+                System.out.print("Объем: ");
+                double volume = Double.parseDouble(scanner.nextLine());
+                System.out.print("Хранимый материал: ");
+                String stored = scanner.nextLine();
+                System.out.print("Материал: ");
+                String material = scanner.nextLine();
+                yield new BarrelBuilder()
+                        .setVolume(volume)
+                        .setStoredMaterial(stored)
+                        .setMaterial(material)
+                        .build();
+            }
+            default -> throw new IllegalArgumentException("Неизвестный класс: " + classType);
         };
     }
 
-    /**
-     * Создание компаратора для выбранного поля.
-     */
-    @SuppressWarnings("unchecked")
-    private Comparator<Sortable> createComparator() {
-        int fieldIndex = selectedFieldIndex - 1;
-
-        return (obj1, obj2) -> {
-            Comparable<Object> value1 = (Comparable<Object>) obj1.getFieldByIndex(fieldIndex);
-            Comparable<Object> value2 = (Comparable<Object>) obj2.getFieldByIndex(fieldIndex);
-            return value1.compareTo(value2);
+    private Object createRandomObject(int classType) {
+        return switch (classType) {
+            case 1 -> new UserBuilder()
+                    .setName("User" + random.nextInt(1000))
+                    .setPassword("pass" + random.nextInt(9999))
+                    .setEmail("user" + random.nextInt(1000) + "@mail.com")
+                    .build();
+            case 2 -> new StudentBuilder()
+                    .setGroupNumber("Группа-" + (100 + random.nextInt(90)))
+                    .setAverageGrade(Math.round((2.0 + random.nextDouble() * 3.0) * 100.0) / 100.0)
+                    .setRecordBookNumber("RB" + random.nextInt(900000) + 100000)
+                    .build();
+            case 3 -> new CarBuilder()
+                    .setPower(50 + random.nextInt(350))
+                    .setModel(new String[]{"Toyota", "BMW", "Audi", "Mercedes"}[random.nextInt(4)])
+                    .setYear(1990 + random.nextInt(34))
+                    .build();
+            case 4 -> new BusBuilder()
+                    .setNumber(Integer.parseInt(String.valueOf(100 + random.nextInt(900))))
+                    .setModel(new String[]{"Mercedes", "Volvo", "MAN"}[random.nextInt(3)])
+                    .setMileage(random.nextInt(500000))
+                    .build();
+            case 5 -> new BarrelBuilder()
+                    .setVolume(Math.round((10.0 + random.nextDouble() * 990.0) * 100.0) / 100.0)
+                    .setStoredMaterial(new String[]{"Вода", "Нефть", "Газ"}[random.nextInt(3)])
+                    .setMaterial(new String[]{"Сталь", "Пластик", "Дерево"}[random.nextInt(3)])
+                    .build();
+            default -> throw new IllegalArgumentException("Неизвестный класс: " + classType);
         };
     }
 
-    /**
-     * Сброс всего состояния.
-     */
+    private boolean validateParametersInteractive() {
+        if (selectedClassType == 0) {
+            MenuPrinter.printInfo("Не выбран класс");
+            MenuPrinter.printClassSelectionMenu();
+            selectedClassType = getIntInRange("Класс (1-5): ", 1, 5);
+        }
+        if (selectedDataSourceType == 0) {
+            MenuPrinter.printInfo("Не выбран источник");
+            MenuPrinter.printDataSourceMenu();
+            selectedDataSourceType = getIntInRange("Источник (1-3): ", 1, 3);
+        }
+        if (collectionSize == 0) {
+            collectionSize = getIntInRange("Размер (1-10000): ", 1, 10000);
+        }
+        if (selectedFieldIndex == 0) {
+            MenuPrinter.printInfo("Не выбрано поле");
+            MenuPrinter.printFieldSelectionMenu(selectedClassType);
+            selectedFieldIndex = getIntInRange("Поле (1-3): ", 1, 3);
+        }
+        return true;
+    }
+
+    private int getIntInRange(String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int value = Integer.parseInt(scanner.nextLine().trim());
+                if (value >= min && value <= max) return value;
+                System.out.println("Значение должно быть от " + min + " до " + max);
+            } catch (NumberFormatException e) {
+                System.out.println("Введите корректное число");
+            }
+        }
+    }
+
+    private Class<?> getModelClass(int type) {
+        return switch (type) {
+            case 1 -> User.class;
+            case 2 -> Student.class;
+            case 3 -> Car.class;
+            case 4 -> Bus.class;
+            case 5 -> Barrel.class;
+            default -> throw new IllegalArgumentException("Неизвестный тип: " + type);
+        };
+    }
+
+    private String getFieldName(int classType, int fieldIndex) {
+        String[] fields = switch (classType) {
+            case 1 -> new String[]{"name", "password", "email"};
+            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
+            case 3 -> new String[]{"power", "model", "year"};
+            case 4 -> new String[]{"number", "model", "mileage"};
+            case 5 -> new String[]{"volume", "storedMaterial", "material"};
+            default -> new String[]{"field1", "field2", "field3"};
+        };
+        return fields[fieldIndex - 1];
+    }
+
     private void resetState() {
         selectedClassType = 0;
         selectedDataSourceType = 0;
         collectionSize = 0;
         selectedFieldIndex = 0;
-        selectedAlgorithmType = 0;
         filePath = null;
         currentData.clear();
     }
@@ -366,46 +462,12 @@ public class ConsoleUI {
         System.out.println("""
                 
                 ╔════════════════════════════════════════╗
-                ║                                        ║
                 ║   ПРОГРАММА СОРТИРОВКИ ДАННЫХ          ║
-                ║                                        ║
-                ║   Версия 2.0 (с командным режимом)     ║
+                ║   Версия 2.0 (с SortFacade)            ║
                 ║   Java 17                              ║
-                ║                                        ║
                 ╚════════════════════════════════════════╝
                 
-                Введите 'help' для справки по командам.
-                Или выберите пункт меню цифрой (1-7).
+                Введите 'help' для справки.
                 """);
-    }
-
-    private void printFarewellMessage() {
-        System.out.println("""
-                
-                ╔════════════════════════════════════════╗
-                ║   До свидания!                         ║
-                ║   Спасибо за использование программы!  ║
-                ╚════════════════════════════════════════╝
-                """);
-    }
-
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
-
-    private String getDataSourceName(int type) {
-        return switch (type) {
-            case 1 -> "Ручной ввод";
-            case 2 -> "Случайные данные";
-            case 3 -> "Из файла";
-            default -> "Неизвестно";
-        };
-    }
-
-    private String getAlgorithmName(int type) {
-        return switch (type) {
-            case 1 -> "Bubble Sort";
-            case 2 -> "Quick Sort";
-            case 3 -> "Merge Sort";
-            default -> "Неизвестно";
-        };
     }
 }

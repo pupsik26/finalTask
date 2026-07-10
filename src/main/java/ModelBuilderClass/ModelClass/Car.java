@@ -11,7 +11,7 @@ public class Car {
     protected Car() {
     }
 
-    protected Car(int power, String model, int year) {
+    public Car(int power, String model, int year) {
         this.power = power;
         this.model = model;
         this.year = year;

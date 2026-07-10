@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ivans.task.common.classes.Bus;
+import ModelBuilderClass.ModelClass.Bus;
 import ivans.task.exceptions.InvalidDataException;
 
 class BusValidator implements TypeValidator<Bus> {

@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ivans.task.common.classes.Car;
+import ModelBuilderClass.ModelClass.Car;
 import ivans.task.exceptions.InvalidDataException;
 
 import java.time.Year;

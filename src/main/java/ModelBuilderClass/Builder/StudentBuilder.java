@@ -22,4 +22,8 @@ public class StudentBuilder extends Student {
         this.recordBookNumber = recordBookNumber;
         return this;
     }
+
+    public Student build() {
+        return this;
+    }
 }

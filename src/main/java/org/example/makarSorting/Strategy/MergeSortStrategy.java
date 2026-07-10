@@ -1,4 +1,4 @@
-package Sort;
+package org.example.makarSorting.Strategy;
 
 import java.util.ArrayList;
 import java.util.Comparator;

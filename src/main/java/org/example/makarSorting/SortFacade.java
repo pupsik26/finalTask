@@ -1,4 +1,6 @@
-package Sort;
+package org.example.makarSorting;
+
+import org.example.makarSorting.Strategy.SmartSorter;
 
 import java.util.Comparator;
 import java.util.List;
@@ -9,16 +11,16 @@ public class SortFacade {
             new ComparatorRegister();
 
     public <T> void sort(
-            List<T> list,
-            Class<T> className,
+            List<Object> list,
+            Class<?> className,
             String fieldName) {
 
         Comparator<T> comparator =
-                comparatorRegister
+                (Comparator<T>) comparatorRegister
                         .findComparator(className, fieldName);
 
         SmartSorter<T> sorter = new SmartSorter<>();
 
-        sorter.sort(list, comparator);
+        sorter.sort((List<T>) list, comparator);
     }
 }

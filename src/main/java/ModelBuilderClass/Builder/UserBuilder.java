@@ -22,4 +22,8 @@ public class UserBuilder extends User {
         this.email = email;
         return this;
     }
+
+    public User build() {
+        return this;
+    }
 }

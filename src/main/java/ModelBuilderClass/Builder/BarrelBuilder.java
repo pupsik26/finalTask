@@ -22,4 +22,8 @@ public class BarrelBuilder extends Barrel {
         this.material = material;
         return this;
     }
+
+    public Barrel build() {
+        return this;
+    }
 }

@@ -22,4 +22,8 @@ public class CarBuilder extends Car {
         this.year = year;
         return this;
     }
+
+    public Car build() {
+        return new Car(this.power, this.model, this.year);
+    }
 }

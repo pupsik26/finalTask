@@ -1,8 +1,10 @@
-package Sort;
+package org.example.makarSorting;
 
-import Model.SortedClass;
-import Model.Student;
-import Model.User;
+import ModelBuilderClass.ModelClass.Student;
+import ModelBuilderClass.ModelClass.User;
+import ModelBuilderClass.ModelClass.Car;
+import ModelBuilderClass.ModelClass.Bus;
+import ModelBuilderClass.ModelClass.Barrel;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -18,7 +20,7 @@ public class ComparatorRegister {
             ),
             Student.class, Map.of(
                     "groupNumber", Comparator.comparing(Student::getGroupNumber),
-                    "gpa", Comparator.comparing(Student::getGpa),
+                    "gpa", Comparator.comparing(Student::getAverageGrade),
                     "recordBookNumber", Comparator.comparing(Student::getRecordBookNumber)
             ),
             Car.class, Map.of(

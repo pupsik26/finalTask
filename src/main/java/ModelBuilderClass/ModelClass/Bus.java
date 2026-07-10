@@ -4,20 +4,20 @@ import java.util.Objects;
 
 public class Bus {
 
-    protected String number;
+    protected int number;
     protected String model;
     protected int mileage;
 
     protected Bus() {
     }
 
-    protected Bus(String number, String model, int mileage) {
+    protected Bus(int number, String model, int mileage) {
         this.number = number;
         this.model = model;
         this.mileage = mileage;
     }
 
-    public String getNumber() {
+    public int getNumber() {
         return number;
     }
 
