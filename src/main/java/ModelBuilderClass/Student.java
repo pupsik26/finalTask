@@ -3,7 +3,6 @@ package ModelBuilderClass;
 import java.util.Objects;
 
 public class Student {
-
     private final String groupNumber;
     private final double averageGrade;
     private final String recordBookNumber;
@@ -18,17 +17,9 @@ public class Student {
         return new Builder();
     }
 
-    public String getGroupNumber() {
-        return groupNumber;
-    }
-
-    public double getAverageGrade() {
-        return averageGrade;
-    }
-
-    public String getRecordBookNumber() {
-        return recordBookNumber;
-    }
+    public String getGroupNumber() { return groupNumber; }
+    public double getAverageGrade() { return averageGrade; }
+    public String getRecordBookNumber() { return recordBookNumber; }
 
     @Override
     public String toString() {
@@ -56,9 +47,6 @@ public class Student {
         private double averageGrade;
         private String recordBookNumber;
 
-        public Builder() {
-        }
-
         public Builder setGroupNumber(String groupNumber) {
             this.groupNumber = groupNumber;
             return this;
@@ -73,6 +61,7 @@ public class Student {
             this.recordBookNumber = recordBookNumber;
             return this;
         }
+
         public Student build() {
             return new Student(this);
         }

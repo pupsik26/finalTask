@@ -3,7 +3,6 @@ package ModelBuilderClass;
 import java.util.Objects;
 
 public class User {
-
     private final String name;
     private final String password;
     private final String email;
@@ -18,17 +17,9 @@ public class User {
         return new Builder();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
+    public String getName() { return name; }
+    public String getPassword() { return password; }
+    public String getEmail() { return email; }
 
     @Override
     public String toString() {
@@ -55,9 +46,6 @@ public class User {
         private String password;
         private String email;
 
-        public Builder() {
-        }
-
         public Builder setName(String name) {
             this.name = name;
             return this;
@@ -72,6 +60,7 @@ public class User {
             this.email = email;
             return this;
         }
+
         public User build() {
             return new User(this);
         }

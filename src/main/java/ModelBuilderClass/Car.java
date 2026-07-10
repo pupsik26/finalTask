@@ -3,7 +3,6 @@ package ModelBuilderClass;
 import java.util.Objects;
 
 public class Car {
-
     private final int power;
     private final String model;
     private final int year;
@@ -18,17 +17,9 @@ public class Car {
         return new Builder();
     }
 
-    public int getPower() {
-        return power;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public int getYear() {
-        return year;
-    }
+    public int getPower() { return power; }
+    public String getModel() { return model; }
+    public int getYear() { return year; }
 
     @Override
     public String toString() {
@@ -53,9 +44,6 @@ public class Car {
         private String model;
         private int year;
 
-        public Builder() {
-        }
-
         public Builder setPower(int power) {
             this.power = power;
             return this;
@@ -70,6 +58,7 @@ public class Car {
             this.year = year;
             return this;
         }
+
         public Car build() {
             return new Car(this);
         }
