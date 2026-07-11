@@ -1,16 +1,18 @@
 package ui;
 
-import com.sorting.data.DataSource;
-import com.sorting.data.DataSourceFactory;
-import com.sorting.factory.SortableFactory;
-import com.sorting.model.Sortable;
-import com.sorting.sorting.BubbleSortStrategy;
-import com.sorting.sorting.MergeSortStrategy;
-import com.sorting.sorting.QuickSortStrategy;
-import com.sorting.sorting.SortContext;
-import com.sorting.sorting.SortStrategy;
-import ui.CommandParser.CommandParseException;
+import ModelBuilderClass.*;
+import dataSource.consoleReader.ConsoleReader;
+import dataSource.fileReader.FileReader;
+import dataSource.randomData.Generator;
+import makarSorting.EvenFieldSorter;
+import makarSorting.SortFacade;
+import makarSorting.Strategy.MergeSortStrategy;
+import makarSorting.Strategy.QuickSortStrategy;
+import makarSorting.Strategy.SmartSorter;
+import makarSorting.Strategy.SortStrategy;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,35 +20,31 @@ import java.util.Scanner;
 
 /**
  * Консольный интерфейс пользователя.
- * Поддерживает два режима работы:
- * <ul>
- *   <li>Интерактивный — пошаговый выбор через меню</li>
- *   <li>Командный — ввод команды целиком с флагами</li>
- * </ul>
  */
 public class ConsoleUI {
 
     private final Scanner scanner;
-    private final InputValidator inputValidator;
+    private final SortFacade sortFacade;
+    private final EvenFieldSorter evenFieldSorter;
 
-    // Состояние приложения
     private int selectedClassType;
     private int selectedDataSourceType;
     private int collectionSize;
     private int selectedFieldIndex;
-    private int selectedAlgorithmType;
+    private SortType selectedSortType;
+    private SortAlgorithm selectedAlgorithm;
     private String filePath;
-    private List<Sortable> currentData;
+    private List<Object> currentData;
 
     public ConsoleUI(Scanner scanner) {
         this.scanner = scanner;
-        this.inputValidator = new InputValidator(scanner);
+        this.sortFacade = new SortFacade();
+        this.evenFieldSorter = new EvenFieldSorter();
         this.currentData = new ArrayList<>();
+        this.selectedSortType = SortType.NORMAL;
+        this.selectedAlgorithm = SortAlgorithm.SMART;
     }
 
-    /**
-     * Запускает главный цикл программы.
-     */
     public void run() {
         printWelcomeMessage();
 
@@ -54,20 +52,16 @@ public class ConsoleUI {
 
         while (isRunning) {
             MenuPrinter.printMainMenu(
-                    selectedClassType,
-                    selectedDataSourceType,
-                    collectionSize,
-                    selectedFieldIndex,
-                    selectedAlgorithmType
+                    selectedClassType, selectedDataSourceType,
+                    collectionSize, selectedFieldIndex,
+                    selectedSortType, selectedAlgorithm
             );
             MenuPrinter.printCommandHint();
 
             System.out.print("\n> ");
             String rawInput = scanner.nextLine().trim();
 
-            if (rawInput.isEmpty()) {
-                continue;
-            }
+            if (rawInput.isEmpty()) continue;
 
             if (isCommandMode(rawInput)) {
                 isRunning = handleCommand(rawInput);
@@ -77,18 +71,10 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Определяет, является ли ввод командой (содержит буквы) или цифрой меню.
-     */
     private boolean isCommandMode(String input) {
         return !input.matches("^\\d+$");
     }
 
-    /**
-     * Обработка команды.
-     *
-     * @return false если нужно выйти из программы
-     */
     private boolean handleCommand(String rawInput) {
         try {
             Command command = CommandParser.parse(rawInput);
@@ -99,11 +85,11 @@ public class ConsoleUI {
             }
 
             if (command.isExit()) {
-                printFarewellMessage();
+                System.out.println("\nДо свидания!");
                 return false;
             }
 
-            if ("clear".equalsIgnoreCase(command.getAction())) {
+            if (command.isClear()) {
                 resetState();
                 MenuPrinter.printSuccess("Все настройки сброшены");
                 return true;
@@ -113,30 +99,31 @@ public class ConsoleUI {
                 return handleStartCommand(command);
             }
 
-            MenuPrinter.printError("Неизвестная команда: '" + command.getAction() + "'");
-            MenuPrinter.printInfo("Введите 'help' для справки");
+            if (command.isUnknown()) {
+                MenuPrinter.printError("Неизвестная команда: '" + rawInput.split("\\s+")[0] + "'");
+                MenuPrinter.printInfo("Введите 'help' для справки");
+                return true;
+            }
+
             return true;
 
-        } catch (CommandParseException e) {
+        } catch (CommandParser.CommandParseException e) {
             MenuPrinter.printError(e.getMessage());
-            MenuPrinter.printInfo("Введите 'help' для справки по командам");
+            MenuPrinter.printInfo("Введите 'help' для справки");
             return true;
         }
     }
 
-    /**
-     * Обработка команды start.
-     * Применяет флаги к текущему состоянию и запускает сортировку.
-     */
     private boolean handleStartCommand(Command command) {
         command.getClassType().ifPresent(v -> selectedClassType = v);
         command.getDataSourceType().ifPresent(v -> selectedDataSourceType = v);
         command.getCollectionSize().ifPresent(v -> collectionSize = v);
         command.getFieldIndex().ifPresent(v -> selectedFieldIndex = v);
-        command.getAlgorithmType().ifPresent(v -> selectedAlgorithmType = v);
+        command.getSortType().ifPresent(v -> selectedSortType = v);
+        command.getAlgorithmCode().ifPresent(v -> selectedAlgorithm = SortAlgorithm.fromCode(v));
         command.getFilePath().ifPresent(v -> filePath = v);
 
-        if (!validateAllParametersInteractive()) {
+        if (!validateParametersInteractive()) {
             return true;
         }
 
@@ -144,48 +131,6 @@ public class ConsoleUI {
         return true;
     }
 
-    /**
-     * Интерактивно запрашивает недостающие параметры.
-     *
-     * @return true если все параметры заполнены
-     */
-    private boolean validateAllParametersInteractive() {
-        if (selectedClassType == 0) {
-            MenuPrinter.printInfo("Не выбран класс. Выберите:");
-            MenuPrinter.printClassSelectionMenu();
-            selectedClassType = inputValidator.getIntInRange("Класс (1-5): ", 1, 5);
-        }
-
-        if (selectedDataSourceType == 0) {
-            MenuPrinter.printInfo("Не выбран источник данных. Выберите:");
-            MenuPrinter.printDataSourceMenu();
-            selectedDataSourceType = inputValidator.getIntInRange("Источник (1-3): ", 1, 3);
-        }
-
-        if (collectionSize == 0) {
-            collectionSize = inputValidator.getPositiveInt("Размер коллекции (1-10000): ", 10000);
-        }
-
-        if (selectedFieldIndex == 0) {
-            MenuPrinter.printInfo("Не выбрано поле. Выберите:");
-            MenuPrinter.printFieldSelectionMenu(selectedClassType);
-            selectedFieldIndex = inputValidator.getIntInRange("Поле (1-3): ", 1, 3);
-        }
-
-        if (selectedAlgorithmType == 0) {
-            MenuPrinter.printInfo("Не выбран алгоритм. Выберите:");
-            MenuPrinter.printAlgorithmMenu();
-            selectedAlgorithmType = inputValidator.getIntInRange("Алгоритм (1-3): ", 1, 3);
-        }
-
-        return true;
-    }
-
-    /**
-     * Обработка выбора пункта меню (цифра).
-     *
-     * @return false если нужно выйти
-     */
     private boolean handleMenuChoice(String input) {
         try {
             int choice = Integer.parseInt(input);
@@ -195,26 +140,27 @@ public class ConsoleUI {
                 case 2 -> { handleDataSourceSelection(); yield true; }
                 case 3 -> { handleCollectionSizeSelection(); yield true; }
                 case 4 -> { handleFieldSelection(); yield true; }
-                case 5 -> { handleAlgorithmSelection(); yield true; }
-                case 6 -> { handleSortExecution(); yield true; }
-                case 7 -> { printFarewellMessage(); yield false; }
+                case 5 -> { handleSortTypeSelection(); yield true; }
+                case 6 -> { handleAlgorithmSelection(); yield true; }
+                case 7 -> { handleSortExecution(); yield true; }
+                case 8 -> { System.out.println("\nДо свидания!"); yield false; }
                 default -> {
-                    MenuPrinter.printError("Выберите пункт от 1 до 7");
+                    MenuPrinter.printError("Выберите пункт от 1 до 8");
                     yield true;
                 }
             };
         } catch (NumberFormatException e) {
-            MenuPrinter.printError("Неверный ввод. Введите цифру (1-7) или команду (help, start, exit)");
+            MenuPrinter.printError("Неверный ввод. Введите цифру или команду");
             return true;
         }
     }
 
     private void handleClassSelection() {
         MenuPrinter.printClassSelectionMenu();
-        selectedClassType = inputValidator.getIntInRange("Выберите класс (1-5): ", 1, 5);
+        selectedClassType = getIntInRange("Выберите класс (1-5): ", 1, 5);
         selectedFieldIndex = 0;
         currentData.clear();
-        MenuPrinter.printSuccess("Выбран класс: " + SortableFactory.getClassName(selectedClassType));
+        MenuPrinter.printSuccess("Выбран класс: " + getClassName(selectedClassType));
     }
 
     private void handleDataSourceSelection() {
@@ -223,10 +169,11 @@ public class ConsoleUI {
             return;
         }
         MenuPrinter.printDataSourceMenu();
-        selectedDataSourceType = inputValidator.getIntInRange("Выберите источник (1-3): ", 1, 3);
+        selectedDataSourceType = getIntInRange("Выберите источник (1-3): ", 1, 3);
 
         if (selectedDataSourceType == 3) {
-            filePath = inputValidator.getFilePath("Введите путь к файлу: ");
+            System.out.print("Введите путь к файлу (.csv, .json, .xml): ");
+            filePath = scanner.nextLine().trim();
         }
 
         currentData.clear();
@@ -238,7 +185,7 @@ public class ConsoleUI {
             MenuPrinter.printError("Сначала выберите класс!");
             return;
         }
-        collectionSize = inputValidator.getPositiveInt("Введите размер коллекции (1-10000): ", 10000);
+        collectionSize = getIntInRange("Введите размер коллекции (1-10000): ", 1, 10000);
         currentData.clear();
         MenuPrinter.printSuccess("Размер коллекции: " + collectionSize);
     }
@@ -249,28 +196,34 @@ public class ConsoleUI {
             return;
         }
         MenuPrinter.printFieldSelectionMenu(selectedClassType);
-        selectedFieldIndex = inputValidator.getIntInRange("Выберите поле (1-3): ", 1, 3);
+        selectedFieldIndex = getIntInRange("Выберите поле (1-3): ", 1, 3);
 
-        String fieldName = SortableFactory.getFieldNames(selectedClassType)[selectedFieldIndex - 1];
+        String fieldName = getFieldName(selectedClassType, selectedFieldIndex);
         MenuPrinter.printSuccess("Выбрано поле: " + fieldName);
+    }
+
+    private void handleSortTypeSelection() {
+        MenuPrinter.printSortTypeMenu();
+        int choice = getIntInRange("Выберите тип сортировки (1-2): ", 1, 2);
+
+        selectedSortType = (choice == 1) ? SortType.NORMAL : SortType.EVEN;
+        MenuPrinter.printSuccess("Выбран тип сортировки: " + selectedSortType.getDescription());
     }
 
     private void handleAlgorithmSelection() {
         MenuPrinter.printAlgorithmMenu();
-        selectedAlgorithmType = inputValidator.getIntInRange("Выберите алгоритм (1-3): ", 1, 3);
-        MenuPrinter.printSuccess("Выбран алгоритм: " + getAlgorithmName(selectedAlgorithmType));
+        int choice = getIntInRange("Выберите алгоритм (1-3): ", 1, 3);
+
+        selectedAlgorithm = SortAlgorithm.fromCode(choice);
+        MenuPrinter.printSuccess("Выбран алгоритм: " + selectedAlgorithm.getDescription());
     }
 
     private void handleSortExecution() {
-        if (!validateAllParametersInteractive()) {
-            return;
-        }
+        if (!validateParametersInteractive()) return;
         executeSort();
     }
 
-    /**
-     * Выполнение сортировки (используется и в командном, и в интерактивном режиме).
-     */
+    @SuppressWarnings("unchecked")
     private void executeSort() {
         try {
             if (currentData.isEmpty()) {
@@ -282,38 +235,58 @@ public class ConsoleUI {
                 return;
             }
 
-            SortStrategy<Sortable> strategy = createSortStrategy();
-            SortContext<Sortable> sortContext = new SortContext<>(strategy);
+            String fieldName = getFieldName(selectedClassType, selectedFieldIndex);
+            Class<?> modelClass = getModelClass(selectedClassType);
 
-            Comparator<Sortable> comparator = createComparator();
+            MenuPrinter.printInfo("Начинаем сортировку...");
 
             long startTime = System.nanoTime();
-            sortContext.sort(currentData, comparator);
+
+            if (selectedSortType == SortType.EVEN) {
+                sortFacade.sortEven(currentData, modelClass, fieldName);
+            } else {
+                if (selectedAlgorithm == SortAlgorithm.SMART) {
+                    sortFacade.sort(currentData, modelClass, fieldName);
+                } else {
+                    SortStrategy<Object> strategy = createStrategy(selectedAlgorithm);
+                    Comparator<Object> comparator = (Comparator<Object>)
+                            new makarSorting.ComparatorRegister().findComparator(modelClass, fieldName);
+                    strategy.sort(currentData, comparator);
+                }
+            }
+
             long endTime = System.nanoTime();
-            double elapsedMs = (endTime - startTime) / 1_000_000.0;
 
-            String fieldName = SortableFactory.getFieldNames(selectedClassType)[selectedFieldIndex - 1];
-            String algorithmName = getAlgorithmName(selectedAlgorithmType);
-
-            MenuPrinter.printSortResults(currentData, fieldName, algorithmName);
-            System.out.printf("⏱ Время сортировки: %.3f мс%n%n", elapsedMs);
+            MenuPrinter.printSortResults(currentData, fieldName, selectedSortType,
+                    selectedAlgorithm, endTime - startTime);
 
         } catch (Exception e) {
             MenuPrinter.printError("Ошибка при сортировке: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     /**
-     * Загрузка данных из источника.
+     * Создаёт стратегию сортировки с ЯВНЫМ указанием типа <Object>.
      */
+    private SortStrategy<Object> createStrategy(SortAlgorithm algorithm) {
+        return switch (algorithm) {
+            case MERGE -> new MergeSortStrategy<Object>();
+            case QUICK -> new QuickSortStrategy<Object>();
+            case SMART -> new SmartSorter<Object>();
+        };
+    }
+
     private void loadData() {
         MenuPrinter.printInfo("Загрузка данных...");
 
         try {
-            DataSource<Sortable> dataSource = DataSourceFactory.createDataSource(
-                    selectedDataSourceType, selectedClassType);
-
-            currentData = dataSource.getData(collectionSize);
+            currentData = switch (selectedDataSourceType) {
+                case 1 -> loadManualData();
+                case 2 -> loadRandomData();
+                case 3 -> loadFileData();
+                default -> throw new IllegalStateException("Неизвестный источник: " + selectedDataSourceType);
+            };
 
             MenuPrinter.printSuccess("Загружено " + currentData.size() + " объектов");
 
@@ -323,73 +296,150 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Создание стратегии сортировки.
-     */
-    private SortStrategy<Sortable> createSortStrategy() {
-        return switch (selectedAlgorithmType) {
-            case 1 -> new BubbleSortStrategy<>();
-            case 2 -> new QuickSortStrategy<>();
-            case 3 -> new MergeSortStrategy<>();
-            default -> throw new IllegalStateException("Неизвестный алгоритм: " + selectedAlgorithmType);
+    private List<Object> loadManualData() {
+        ConsoleReader consoleReader = new ConsoleReader();
+
+        return switch (selectedClassType) {
+            case 1 -> new ArrayList<>(consoleReader.readUser(
+                    "Введите количество пользователей: ",
+                    "Введите имя пользователя %d: ",
+                    "Введите пароль пользователя %d: ",
+                    "Введите email пользователя %d: "
+            ));
+            case 2 -> new ArrayList<>(consoleReader.readStudent(
+                    "Введите количество студентов: ",
+                    "Введите номер группы студента %d: ",
+                    "Введите средний балл студента %d: ",
+                    "Введите номер зачетки студента %d: "
+            ));
+            case 3 -> new ArrayList<>(consoleReader.readCar(
+                    "Введите количество автомобилей: ",
+                    "Введите мощность автомобиля %d: ",
+                    "Введите модель автомобиля %d: ",
+                    "Введите год выпуска автомобиля %d: "
+            ));
+            case 4 -> new ArrayList<>(consoleReader.readBus(
+                    "Введите количество автобусов: ",
+                    "Введите номер автобуса %d: ",
+                    "Введите модель автобуса %d: ",
+                    "Введите пробег автобуса %d: "
+            ));
+            case 5 -> new ArrayList<>(consoleReader.readBarrel(
+                    "Введите количество бочек: ",
+                    "Введите объем бочки %d: ",
+                    "Введите хранимый материал бочки %d: ",
+                    "Введите материал бочки %d: "
+            ));
+            default -> throw new IllegalArgumentException("Неизвестный класс: " + selectedClassType);
         };
     }
 
-    /**
-     * Создание компаратора для выбранного поля.
-     */
-    @SuppressWarnings("unchecked")
-    private Comparator<Sortable> createComparator() {
-        int fieldIndex = selectedFieldIndex - 1;
+    private List<Object> loadRandomData() {
+        Generator generator = new Generator();
 
-        return (obj1, obj2) -> {
-            Comparable<Object> value1 = (Comparable<Object>) obj1.getFieldByIndex(fieldIndex);
-            Comparable<Object> value2 = (Comparable<Object>) obj2.getFieldByIndex(fieldIndex);
-            return value1.compareTo(value2);
+        return switch (selectedClassType) {
+            case 1 -> new ArrayList<>(generator.readUsers(collectionSize));
+            case 2 -> new ArrayList<>(generator.readStudents(collectionSize));
+            case 3 -> new ArrayList<>(generator.readCars(collectionSize));
+            case 4 -> new ArrayList<>(generator.readBus(collectionSize));
+            case 5 -> new ArrayList<>(generator.readBarrels(collectionSize));
+            default -> throw new IllegalArgumentException("Неизвестный класс: " + selectedClassType);
         };
     }
 
-    /**
-     * Сброс всего состояния.
-     */
-    private void resetState() {
-        selectedClassType = 0;
-        selectedDataSourceType = 0;
-        collectionSize = 0;
-        selectedFieldIndex = 0;
-        selectedAlgorithmType = 0;
-        filePath = null;
-        currentData.clear();
+    private List<Object> loadFileData() throws IOException {
+        if (filePath == null || filePath.isBlank()) {
+            throw new IllegalArgumentException("Путь к файлу не указан");
+        }
+
+        try {
+            return switch (selectedClassType) {
+                case 1 -> new ArrayList<>(FileReader.readUser(filePath));
+                case 2 -> new ArrayList<>(FileReader.readStudent(filePath));
+                case 3 -> new ArrayList<>(FileReader.readCar(filePath));
+                case 4 -> new ArrayList<>(FileReader.readBus(filePath));
+                case 5 -> new ArrayList<>(FileReader.readBarrel(filePath));
+                default -> throw new IllegalArgumentException("Неизвестный класс: " + selectedClassType);
+            };
+        } catch (FileNotFoundException e) {
+            throw new IOException("Файл не найден: " + filePath);
+        } catch (IOException e) {
+            throw new IOException("Ошибка чтения файла: " + e.getMessage());
+        }
     }
 
-    private void printWelcomeMessage() {
-        System.out.println("""
-                
-                ╔════════════════════════════════════════╗
-                ║                                        ║
-                ║   ПРОГРАММА СОРТИРОВКИ ДАННЫХ          ║
-                ║                                        ║
-                ║   Версия 2.0 (с командным режимом)     ║
-                ║   Java 17                              ║
-                ║                                        ║
-                ╚════════════════════════════════════════╝
-                
-                Введите 'help' для справки по командам.
-                Или выберите пункт меню цифрой (1-7).
-                """);
+    private boolean validateParametersInteractive() {
+        if (selectedClassType == 0) {
+            MenuPrinter.printInfo("Не выбран класс");
+            MenuPrinter.printClassSelectionMenu();
+            selectedClassType = getIntInRange("Класс (1-5): ", 1, 5);
+        }
+        if (selectedDataSourceType == 0) {
+            MenuPrinter.printInfo("Не выбран источник");
+            MenuPrinter.printDataSourceMenu();
+            selectedDataSourceType = getIntInRange("Источник (1-3): ", 1, 3);
+        }
+        if (collectionSize == 0) {
+            collectionSize = getIntInRange("Размер (1-10000): ", 1, 10000);
+        }
+        if (selectedFieldIndex == 0) {
+            MenuPrinter.printInfo("Не выбрано поле");
+            MenuPrinter.printFieldSelectionMenu(selectedClassType);
+            selectedFieldIndex = getIntInRange("Поле (1-3): ", 1, 3);
+        }
+        if (selectedSortType == null) {
+            MenuPrinter.printInfo("Не выбран тип сортировки");
+            MenuPrinter.printSortTypeMenu();
+            int choice = getIntInRange("Тип сортировки (1-2): ", 1, 2);
+            selectedSortType = (choice == 1) ? SortType.NORMAL : SortType.EVEN;
+        }
+        if (selectedAlgorithm == null) {
+            MenuPrinter.printInfo("Не выбран алгоритм");
+            MenuPrinter.printAlgorithmMenu();
+            int choice = getIntInRange("Алгоритм (1-3): ", 1, 3);
+            selectedAlgorithm = SortAlgorithm.fromCode(choice);
+        }
+        if (selectedDataSourceType == 3 && (filePath == null || filePath.isBlank())) {
+            System.out.print("Введите путь к файлу: ");
+            filePath = scanner.nextLine().trim();
+        }
+        return true;
     }
 
-    private void printFarewellMessage() {
-        System.out.println("""
-                
-                ╔════════════════════════════════════════╗
-                ║   До свидания!                         ║
-                ║   Спасибо за использование программы!  ║
-                ╚════════════════════════════════════════╝
-                """);
+    private int getIntInRange(String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int value = Integer.parseInt(scanner.nextLine().trim());
+                if (value >= min && value <= max) return value;
+                System.out.println("Значение должно быть от " + min + " до " + max);
+            } catch (NumberFormatException e) {
+                System.out.println("Введите корректное число");
+            }
+        }
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+    private Class<?> getModelClass(int type) {
+        return switch (type) {
+            case 1 -> User.class;
+            case 2 -> Student.class;
+            case 3 -> Car.class;
+            case 4 -> Bus.class;
+            case 5 -> Barrel.class;
+            default -> throw new IllegalArgumentException("Неизвестный тип: " + type);
+        };
+    }
+
+    private String getClassName(int type) {
+        return switch (type) {
+            case 1 -> "User";
+            case 2 -> "Student";
+            case 3 -> "Car";
+            case 4 -> "Bus";
+            case 5 -> "Barrel";
+            default -> "Неизвестно";
+        };
+    }
 
     private String getDataSourceName(int type) {
         return switch (type) {
@@ -400,12 +450,40 @@ public class ConsoleUI {
         };
     }
 
-    private String getAlgorithmName(int type) {
-        return switch (type) {
-            case 1 -> "Bubble Sort";
-            case 2 -> "Quick Sort";
-            case 3 -> "Merge Sort";
-            default -> "Неизвестно";
+    private String getFieldName(int classType, int fieldIndex) {
+        String[] fields = switch (classType) {
+            case 1 -> new String[]{"name", "password", "email"};
+            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
+            case 3 -> new String[]{"power", "model", "year"};
+            case 4 -> new String[]{"number", "model", "mileage"};
+            case 5 -> new String[]{"volume", "storedMaterial", "material"};
+            default -> new String[]{"field1", "field2", "field3"};
         };
+        return fields[fieldIndex - 1];
+    }
+
+    private void resetState() {
+        selectedClassType = 0;
+        selectedDataSourceType = 0;
+        collectionSize = 0;
+        selectedFieldIndex = 0;
+        selectedSortType = SortType.NORMAL;
+        selectedAlgorithm = SortAlgorithm.SMART;
+        filePath = null;
+        currentData.clear();
+    }
+
+    private void printWelcomeMessage() {
+        System.out.println("""
+                
+                ╔════════════════════════════════════════╗
+                   ПРОГРАММА СОРТИРОВКИ DАННЫХ          ║
+                ║   Версия 5.0 (с выбором алгоритма)     ║
+                ║   Java 17                              ║
+                ╚════════════════════════════════════════╝
+                
+                Поддерживаемые форматы файлов: CSV, JSON, XML
+                Введите 'help' для справки.
+                """);
     }
 }
