@@ -1,0 +1,11 @@
+<busses>
+    <bus number="11"
+         model="ABC"
+         mileage="7000" />
+    <bus number="12"
+         model="DEF"
+         mileage="6000" />
+    <bus number="13"
+         model="ABD"
+         mileage="3000" />
+</busses>

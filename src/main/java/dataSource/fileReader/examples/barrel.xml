@@ -1,0 +1,17 @@
+<barrels>
+    <barrel volume="20"
+            storedMaterial="Water"
+            material="Steel" />
+    <barrel volume="30"
+            storedMaterial="Oil"
+            material="Steel" />
+    <barrel volume="15"
+            storedMaterial="Water"
+            material="Plastic" />
+    <barrel volume="80"
+            storedMaterial="Fuel"
+            material="Steel" />
+    <barrel volume="10"
+            storedMaterial="Water"
+            material="Plastic" />
+</barrels>
