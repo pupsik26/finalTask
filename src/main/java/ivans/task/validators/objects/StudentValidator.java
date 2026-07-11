@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ModelBuilderClass.ModelClass.Student;
+import ModelBuilderClass.Student;
 import ivans.task.exceptions.InvalidDataException;
 
 class StudentValidator implements TypeValidator<Student> {

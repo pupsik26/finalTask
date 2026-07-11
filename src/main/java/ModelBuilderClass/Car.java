@@ -28,8 +28,8 @@ public class Car {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Car car = (Car) o;
         return power == car.power && year == car.year && Objects.equals(model, car.model);
     }

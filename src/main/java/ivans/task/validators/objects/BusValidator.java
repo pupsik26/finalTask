@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ModelBuilderClass.ModelClass.Bus;
+import ModelBuilderClass.Bus;
 import ivans.task.exceptions.InvalidDataException;
 
 class BusValidator implements TypeValidator<Bus> {
@@ -11,7 +11,7 @@ class BusValidator implements TypeValidator<Bus> {
     @Override
     public void validate(Bus bus) throws InvalidDataException {
         ValidationUtils.requireNonNull(bus, "Bus");
-        validateNumber(bus.getNumber());
+        validateNumber(Integer.parseInt(bus.getNumber()));
         validateModel(bus.getModel());
         validateMileage(bus.getMileage());
     }

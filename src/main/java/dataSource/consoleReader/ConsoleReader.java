@@ -86,7 +86,7 @@ public class ConsoleReader {
 
             busses.add(
                     Bus.builder()
-                            .setNumber(number)
+                            .setNumber(String.valueOf(number))
                             .setModel(model)
                             .setMileage(mileage)
                             .build()
@@ -141,7 +141,7 @@ public class ConsoleReader {
             students.add(
                     Student.builder()
                             .setGroupNumber(groupNumber)
-                            .setGpa(gpa)
+                            .setAverageGrade(gpa)
                             .setRecordBookNumber(recordBookNumber)
                             .build()
             );

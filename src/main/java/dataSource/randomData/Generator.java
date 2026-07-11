@@ -7,31 +7,19 @@ import java.util.List;
 import java.util.Random;
 
 public class Generator {
+
+    // Один Random на весь класс (лучше для производительности и качества)
+    private final Random random = new Random();
+
     private final static double BARREL_VOLUME_MIN = 10;
     private final static double BARREL_VOLUME_MAX = 100;
     private final static String[] BARREL_MATERIAL = {
-            "Дуб",
-            "Ясень",
-            "Бук",
-            "Вишня",
-            "Осина",
-            "Лиственница",
-            "Кедр",
-            "Нержавеющая сталь",
-            "Чугун",
-            "Стеклопластик"
+            "Дуб", "Ясень", "Бук", "Вишня", "Осина",
+            "Лиственница", "Кедр", "Нержавеющая сталь", "Чугун", "Стеклопластик"
     };
     private final static String[] BARREL_STORED_MATERIAL = {
-            "Вода",
-            "Вино",
-            "Мёд",
-            "Соленья",
-            "Масло",
-            "Зерно",
-            "Соль",
-            "Сироп",
-            "Виски",
-            "Уксус"
+            "Вода", "Вино", "Мёд", "Соленья", "Масло",
+            "Зерно", "Соль", "Сироп", "Виски", "Уксус"
     };
 
     private final static int BUS_NUMBER_MIN = 1;
@@ -39,16 +27,9 @@ public class Generator {
     private final static double BUS_MILEAGE_MIN = 1000;
     private final static double BUS_MILEAGE_MAX = 100000;
     private final static String[] BUS_MODEL = {
-            "ЛиАЗ‑5292",
-            "ПАЗ‑3205",
-            "НефАЗ‑5299",
-            "МАЗ‑203",
-            "Volgabus‑5270",
-            "КАвЗ‑4238",
-            "Mercedes‑Benz Citaro",
-            "Scania Citywide",
-            "MAN Lion’s City",
-            "Yutong ZK6122H9"
+            "ЛиАЗ‑5292", "ПАЗ‑3205", "НефАЗ‑5299", "МАЗ‑203", "Volgabus‑5270",
+            "КАвЗ‑4238", "Mercedes‑Benz Citaro", "Scania Citywide",
+            "MAN Lion's City", "Yutong ZK6122H9"
     };
 
     private final static int CAR_POWER_MIN = 100;
@@ -56,20 +37,14 @@ public class Generator {
     private final static int CAR_YEAR_MIN = 1990;
     private final static int CAR_YEAR_MAX = 2025;
     private final static String[] CAR_MODEL = {
-            "Toyota Camry",
-            "Hyundai Solaris",
-            "Kia Rio",
-            "Volkswagen Polo",
-            "Skoda Octavia",
-            "Lada Vesta",
-            "Renault Logan",
-            "Ford Focus",
-            "Nissan Qashqai",
-            "Mazda CX‑5"
+            "Toyota Camry", "Hyundai Solaris", "Kia Rio", "Volkswagen Polo",
+            "Skoda Octavia", "Lada Vesta", "Renault Logan", "Ford Focus",
+            "Nissan Qashqai", "Mazda CX‑5"
     };
 
     private final static String[] STUDENT_GROUP = {
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+            "K", "L", "M", "N", "O", "P"
     };
     private final static double STUDENT_GPA_MIN = 2;
     private final static double STUDENT_GPA_MAX = 5;
@@ -77,31 +52,41 @@ public class Generator {
     private final static int STUDENT_NUMBER_MAX = 1000000;
 
     private final static String[] USER_NAME = {
-            "Alexander",
-            "Mary",
-            "Dmitry",
-            "Anna",
-            "Sergei",
-            "Elena",
-            "Andrew",
-            "Olga",
-            "Igor",
-            "Tatiana"
+            "Alexander", "Mary", "Dmitry", "Anna", "Sergei",
+            "Elena", "Andrew", "Olga", "Igor", "Tatiana"
     };
 
+    /**
+     * Возвращает случайное целое число в диапазоне [min, max] включительно.
+     * Использует стандартный безопасный подход через Random.nextInt().
+     */
     private int getRandomInt(int min, int max) {
-        Random rnd = new Random();
-        return Math.toIntExact(Math.round(rnd.nextDouble() * (max - min + 1) + min));
+        if (min > max) {
+            throw new IllegalArgumentException("min (" + min + ") не может быть больше max (" + max + ")");
+        }
+        return random.nextInt(max - min + 1) + min;
     }
 
+    /**
+     * Возвращает случайное double число в диапазоне [min, max] с точностью до 3 знаков.
+     */
     private double getRandomDouble(double min, double max) {
-        Random rnd = new Random();
-        return Math.round((rnd.nextDouble() * (max - min + 1) + min) * 1000) / 1000.0;
+        if (min > max) {
+            throw new IllegalArgumentException("min (" + min + ") не может быть больше max (" + max + ")");
+        }
+        double value = random.nextDouble() * (max - min) + min;
+        return Math.round(value * 1000.0) / 1000.0;
     }
 
+    /**
+     * Возвращает случайный элемент из массива строк.
+     * ИСПРАВЛЕНО: используем nextInt() для безопасного индекса.
+     */
     private String getRandomString(String[] lines) {
-        Random rnd = new Random();
-        return lines[Math.toIntExact(Math.round(rnd.nextDouble() * (lines.length + 1)))];
+        if (lines == null || lines.length == 0) {
+            throw new IllegalArgumentException("Массив строк не может быть пустым");
+        }
+        return lines[random.nextInt(lines.length)];
     }
 
     public List<Barrel> readBarrels(int quantity) {
@@ -122,14 +107,13 @@ public class Generator {
 
     public List<Bus> readBus(int quantity) {
         List<Bus> busses = new LinkedList<>();
-        Random rnd = new Random();
 
         for (int i = 0; i < quantity; i++) {
             busses.add(
                     Bus.builder()
-                            .setNumber(getRandomInt(BUS_NUMBER_MIN, BUS_NUMBER_MAX))
+                            .setNumber(String.valueOf(getRandomInt(BUS_NUMBER_MIN, BUS_NUMBER_MAX)))
                             .setModel(getRandomString(BUS_MODEL))
-                            .setMileage(getRandomDouble(BUS_MILEAGE_MIN, BUS_MILEAGE_MAX))
+                            .setMileage(getRandomInt((int) BUS_MILEAGE_MIN, (int) BUS_MILEAGE_MAX))
                             .build()
             );
         }
@@ -139,7 +123,6 @@ public class Generator {
 
     public List<Car> readCars(int quantity) {
         List<Car> cars = new LinkedList<>();
-        Random rnd = new Random();
 
         for (int i = 0; i < quantity; i++) {
             cars.add(
@@ -156,14 +139,13 @@ public class Generator {
 
     public List<Student> readStudents(int quantity) {
         List<Student> students = new LinkedList<>();
-        Random rnd = new Random();
 
         for (int i = 0; i < quantity; i++) {
             students.add(
                     Student.builder()
                             .setGroupNumber(getRandomString(STUDENT_GROUP))
-                            .setGpa(getRandomDouble(STUDENT_GPA_MIN, STUDENT_GPA_MAX))
-                            .setRecordBookNumber(getRandomInt(STUDENT_NUMBER_MIN, STUDENT_NUMBER_MAX))
+                            .setAverageGrade(getRandomDouble(STUDENT_GPA_MIN, STUDENT_GPA_MAX))
+                            .setRecordBookNumber(String.valueOf(getRandomInt(STUDENT_NUMBER_MIN, STUDENT_NUMBER_MAX)))
                             .build()
             );
         }
@@ -173,14 +155,14 @@ public class Generator {
 
     public List<User> readUsers(int quantity) {
         List<User> users = new LinkedList<>();
-        Random rnd = new Random();
 
         for (int i = 0; i < quantity; i++) {
+            String name = getRandomString(USER_NAME);
             users.add(
                     User.builder()
-                            .setName(getRandomString(USER_NAME))
-                            .setPassword("Qwerty")
-                            .setEmail(getRandomString(USER_NAME) + "@example.com")
+                            .setName(name)
+                            .setPassword("Qwerty" + getRandomInt(100, 999))
+                            .setEmail(name.toLowerCase() + getRandomInt(1, 1000) + "@example.com")
                             .build()
             );
         }

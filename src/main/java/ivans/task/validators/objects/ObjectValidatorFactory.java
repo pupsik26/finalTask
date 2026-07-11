@@ -1,10 +1,6 @@
 package ivans.task.validators.objects;
 
-import ModelBuilderClass.ModelClass.Student;
-import ModelBuilderClass.ModelClass.Car;
-import ModelBuilderClass.ModelClass.Bus;
-import ModelBuilderClass.ModelClass.Barrel;
-import ModelBuilderClass.ModelClass.User;
+import ModelBuilderClass.*;
 import ivans.task.exceptions.InvalidDataException;
 
 import java.util.HashMap;

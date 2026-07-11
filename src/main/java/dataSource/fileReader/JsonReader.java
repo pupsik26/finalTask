@@ -55,7 +55,7 @@ public class JsonReader {
             Bus item = Bus.builder()
                     .setMileage(node.get(HeadersConst.BUS_MILEAGE).asInt())
                     .setModel(node.get(HeadersConst.BUS_MODEL).asText())
-                    .setNumber(node.get(HeadersConst.BUS_NUMBER).asInt())
+                    .setNumber(node.get(HeadersConst.BUS_NUMBER).asText())
                     .build();
 
             ObjectValidatorFactory.getValidator().validate(item);
@@ -81,7 +81,7 @@ public class JsonReader {
             }
 
             Car item = Car.builder()
-                    .setPower(node.get(HeadersConst.CAR_POWER).isInt())
+                    .setPower(node.get(HeadersConst.CAR_POWER).asInt())
                     .setModel(node.get(HeadersConst.CAR_MODEL).asText())
                     .setYear(node.get(HeadersConst.CAR_YEAR).asInt())
                     .build();
@@ -110,7 +110,7 @@ public class JsonReader {
 
             Student item = Student.builder()
                     .setGroupNumber(node.get(HeadersConst.STUDENT_GROUP).asText())
-                    .setGpa(node.get(HeadersConst.STUDENT_GPA).asDouble())
+                    .setAverageGrade(node.get(HeadersConst.STUDENT_GPA).asDouble())
                     .setRecordBookNumber(node.get(HeadersConst.STUDENT_NUMBER).asText())
                     .build();
 

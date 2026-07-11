@@ -1,10 +1,6 @@
 package makarSorting;
 
-import ModelBuilderClass.ModelClass.Student;
-import ModelBuilderClass.ModelClass.User;
-import ModelBuilderClass.ModelClass.Car;
-import ModelBuilderClass.ModelClass.Bus;
-import ModelBuilderClass.ModelClass.Barrel;
+import ModelBuilderClass.*;
 
 import java.util.Comparator;
 import java.util.Map;

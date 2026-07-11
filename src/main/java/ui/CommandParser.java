@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Парсер команд пользователя.
- * Поддерживает флаги: -c (class), -s (source), -n (size), -f (field), -p (path)
+ * Поддерживает флаги: -c, -s, -n, -f, -e, -a, -p
  */
 public final class CommandParser {
 
@@ -17,6 +17,8 @@ public final class CommandParser {
         FLAG_ALIASES.put("-n", "--size");
         FLAG_ALIASES.put("-f", "--field");
         FLAG_ALIASES.put("-p", "--path");
+        FLAG_ALIASES.put("-e", "--even");
+        FLAG_ALIASES.put("-a", "--algo");
     }
 
     private CommandParser() {}
@@ -27,9 +29,16 @@ public final class CommandParser {
         }
 
         String[] tokens = input.trim().split("\\s+");
-        String action = tokens[0].toLowerCase();
+        CommandAction action = CommandAction.fromString(tokens[0]);
 
         var builder = new Command.Builder().setAction(action);
+
+        if (action == CommandAction.HELP
+                || action == CommandAction.EXIT
+                || action == CommandAction.CLEAR
+                || action == CommandAction.UNKNOWN) {
+            return builder.build();
+        }
 
         int i = 1;
         while (i < tokens.length) {
@@ -37,10 +46,16 @@ public final class CommandParser {
 
             if (!token.startsWith("-")) {
                 throw new CommandParseException(
-                        "Неожиданный аргумент: '" + token + "'. Используйте флаги (-c, -s, -n, -f)");
+                        "Неожиданный аргумент: '" + token + "'. Используйте флаги (-c, -s, -n, -f, -e, -a, -p)");
             }
 
             String flag = normalizeFlag(token);
+
+            if (flag.equals("--even")) {
+                builder.setSortType(SortType.EVEN);
+                i++;
+                continue;
+            }
 
             if (i + 1 >= tokens.length) {
                 throw new CommandParseException("Флаг '" + token + "' требует значение");
@@ -67,6 +82,7 @@ public final class CommandParser {
             case "--source" -> builder.setDataSourceType(parseIntFlag(flag, value, 1, 3));
             case "--size" -> builder.setCollectionSize(parseIntFlag(flag, value, 1, 10000));
             case "--field" -> builder.setFieldIndex(parseIntFlag(flag, value, 1, 3));
+            case "--algo" -> builder.setAlgorithmCode(parseIntFlag(flag, value, 1, 3));
             case "--path" -> builder.setFilePath(value);
             default -> throw new CommandParseException("Неизвестный флаг: '" + flag + "'");
         }

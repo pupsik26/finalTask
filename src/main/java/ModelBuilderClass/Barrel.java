@@ -29,8 +29,8 @@ public class Barrel {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Barrel barrel = (Barrel) o;
         return Double.compare(barrel.volume, volume) == 0 &&
                 Objects.equals(storedMaterial, barrel.storedMaterial) &&
