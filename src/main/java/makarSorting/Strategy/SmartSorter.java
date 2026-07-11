@@ -1,4 +1,4 @@
-package org.example.makarSorting.Strategy;
+package makarSorting.Strategy;
 
 import java.util.Comparator;
 import java.util.List;

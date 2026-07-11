@@ -1,4 +1,4 @@
-package org.example.makarSorting;
+package makarSorting;
 
 import ModelBuilderClass.ModelClass.Student;
 import ModelBuilderClass.ModelClass.User;

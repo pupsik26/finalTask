@@ -4,7 +4,7 @@ import ModelBuilderClass.Builder.*;
 import ModelBuilderClass.ModelClass.*;
 import ivans.task.validators.objects.ObjectValidator;
 import ivans.task.validators.objects.ObjectValidatorFactory;
-import org.example.makarSorting.SortFacade;
+import makarSorting.SortFacade;
 
 import java.util.ArrayList;
 import java.util.List;
