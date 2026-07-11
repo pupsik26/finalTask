@@ -53,7 +53,9 @@ public class ConsoleUI {
             System.out.print("\n> ");
             String rawInput = scanner.nextLine().trim();
 
-            if (rawInput.isEmpty()) continue;
+            if (rawInput.isEmpty()) {
+                continue;
+            }
 
             if (isCommandMode(rawInput)) {
                 isRunning = handleCommand(rawInput);
@@ -207,7 +209,9 @@ public class ConsoleUI {
     }
 
     private void handleSortExecution() {
-        if (!validateParametersInteractive()) return;
+        if (!validateParametersInteractive()) {
+            return;
+        }
         executeSort();
     }
 
@@ -418,7 +422,9 @@ public class ConsoleUI {
             System.out.print(prompt);
             try {
                 int value = Integer.parseInt(scanner.nextLine().trim());
-                if (value >= min && value <= max) return value;
+                if (value >= min && value <= max) {
+                    return value;
+                }
                 System.out.println("Значение должно быть от " + min + " до " + max);
             } catch (NumberFormatException e) {
                 System.out.println("Введите корректное число");

@@ -30,7 +30,8 @@ final class ValidationUtils {
 
     static void requireInRange(double value, double min, double max, String fieldName) {
         if (value < min || value > max) {
-            throw new InvalidDataException(fieldName + " должен быть в диапазоне " + min + "-" + max + ", получено: " + value);
+            throw new InvalidDataException(fieldName + " должен быть в диапазоне " +
+                    min + "-" + max + ", получено: " + value);
         }
     }
 }

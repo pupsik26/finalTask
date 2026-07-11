@@ -14,7 +14,8 @@ public final class FileLineValidator {
         }
         String[] fields = line.split(CSV_SEPARATOR, -1);
         if (fields.length != expectedCount) {
-            throw new InvalidFileFormatException("Ожидалось " + expectedCount + " полей, получено " + fields.length + " в строке: " + line);
+            throw new InvalidFileFormatException("Ожидалось " + expectedCount + " полей, получено "
+                    + fields.length + " в строке: " + line);
         }
         for (int i = 0; i < fields.length; i++) {
             fields[i] = fields[i].trim();

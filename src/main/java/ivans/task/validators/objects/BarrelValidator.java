@@ -18,7 +18,8 @@ class BarrelValidator implements TypeValidator<Barrel> {
 
     private void validateVolume(double volume) throws InvalidDataException {
         if (volume <= MIN_VOLUME || volume > MAX_VOLUME) {
-            throw new InvalidDataException("Объём бочки должен быть в диапазоне от " + MIN_VOLUME + " до " + MAX_VOLUME + ", получено: " + volume);
+            throw new InvalidDataException("Объём бочки должен быть в диапазоне от " +
+                    MIN_VOLUME + " до " + MAX_VOLUME + ", получено: " + volume);
         }
     }
 

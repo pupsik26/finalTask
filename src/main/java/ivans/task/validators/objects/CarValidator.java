@@ -21,7 +21,8 @@ class CarValidator implements TypeValidator<Car> {
 
     private void validatePower(int power) throws InvalidDataException {
         if (power <= MIN_POWER || power > MAX_POWER) {
-            throw new InvalidDataException("Мощность должна быть в диапазоне от " + MIN_POWER + " до " + MAX_POWER + ", получено: " + power);
+            throw new InvalidDataException("Мощность должна быть в диапазоне от " +
+                    MIN_POWER + " до " + MAX_POWER + ", получено: " + power);
         }
     }
 
@@ -31,7 +32,8 @@ class CarValidator implements TypeValidator<Car> {
 
     private void validateYear(int year) throws InvalidDataException {
         if (year < MIN_YEAR || year > Year.now().getValue()) {
-            throw new InvalidDataException("Год производства должен быть в диапазоне " + MIN_YEAR + "-" + Year.now().getValue() + ", получено: " + year);
+            throw new InvalidDataException("Год производства должен быть в диапазоне " +
+                    MIN_YEAR + "-" + Year.now().getValue() + ", получено: " + year);
         }
     }
 }

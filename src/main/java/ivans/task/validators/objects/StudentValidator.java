@@ -25,6 +25,7 @@ class StudentValidator implements TypeValidator<Student> {
     }
 
     private void validateRecordBookNumber(String recordBookNumber) throws InvalidDataException {
-        ValidationUtils.requireNonEmptyText(recordBookNumber, "Номер зачётной книжки", ValidationUtils.TEXT_WITH_DIGITS);
+        ValidationUtils.requireNonEmptyText(recordBookNumber,
+                "Номер зачётной книжки", ValidationUtils.TEXT_WITH_DIGITS);
     }
 }

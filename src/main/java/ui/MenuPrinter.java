@@ -169,7 +169,9 @@ public final class MenuPrinter {
     }
 
     private static String getFieldName(int classType, int fieldIndex) {
-        if (classType == 0 || fieldIndex == 0) return "Не выбрано";
+        if (classType == 0 || fieldIndex == 0) {
+            return "Не выбрано";
+        }
         String[] fields = getFieldNames(classType);
         return fieldIndex >= 1 && fieldIndex <= 3 ? fields[fieldIndex - 1] : "Неизвестно";
     }
