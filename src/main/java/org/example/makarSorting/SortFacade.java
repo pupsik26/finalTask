@@ -25,4 +25,16 @@ public class SortFacade {
 
         sorter.sort(list, comparator);
     }
+
+    public <T> void sortEven(
+            List<T> list,
+            Class<T> className,
+            String fieldName) {
+
+        Comparator<T> comparator =
+                comparatorRegister
+                        .findComparator(className, fieldName);
+
+        evenFieldSorter.sort(list, comparator, className, fieldName);
+    }
 }
