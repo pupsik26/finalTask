@@ -1,12 +1,12 @@
-package Sort;
+package makarSorting.Strategy;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
- class MergeSortStrategy<T> implements SortStrategy<T> {
+public class MergeSortStrategy<T> implements SortStrategy<T> {
 
-    private void mergeSort(List<T> list,
+    public void mergeSort(List<T> list,
                           int left,
                           int right,
                           Comparator<? super T> comparator) {

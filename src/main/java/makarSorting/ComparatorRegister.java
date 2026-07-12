@@ -1,24 +1,22 @@
-package Sort;
+package makarSorting;
 
-import Model.SortedClass;
-import Model.Student;
-import Model.User;
+import ModelBuilderClass.*;
 
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-class ComparatorRegister {
+public class ComparatorRegister {
 
     private final Map<Class<?>, Map<String, Comparator<?>>> registry = Map.of(
             User.class, Map.of(
-                    "name"  , Comparator.comparing(User::getName),
+                    "name", Comparator.comparing(User::getName),
                     "password", Comparator.comparing(User::getPassword),
                     "email", Comparator.comparing(User::getEmail)
             ),
             Student.class, Map.of(
                     "groupNumber", Comparator.comparing(Student::getGroupNumber),
-                    "gpa", Comparator.comparing(Student::getGpa),
+                    "gpa", Comparator.comparing(Student::getAverageGrade),
                     "recordBookNumber", Comparator.comparing(Student::getRecordBookNumber)
             ),
             Car.class, Map.of(

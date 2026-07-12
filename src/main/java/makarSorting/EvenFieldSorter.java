@@ -1,7 +1,8 @@
-package Sort;
+package makarSorting;
+
+import makarSorting.Strategy.SmartSorter;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
