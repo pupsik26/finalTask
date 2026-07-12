@@ -89,19 +89,18 @@ public class Generator {
             "Tatiana"
     };
 
+    private final static Random random = new Random();
+
     private int getRandomInt(int min, int max) {
-        Random rnd = new Random();
-        return Math.toIntExact(Math.round(rnd.nextDouble() * (max - min + 1) + min));
+        return Math.toIntExact(Math.round(random.nextDouble() * (max - min + 1) + min));
     }
 
     private double getRandomDouble(double min, double max) {
-        Random rnd = new Random();
-        return Math.round((rnd.nextDouble() * (max - min + 1) + min) * 1000) / 1000.0;
+        return Math.round((random.nextDouble() * (max - min + 1) + min) * 1000) / 1000.0;
     }
 
     private String getRandomString(String[] lines) {
-        Random rnd = new Random();
-        return lines[Math.toIntExact(Math.round(rnd.nextDouble() * (lines.length + 1)))];
+        return lines[Math.toIntExact(Math.round(random.nextDouble() * (lines.length)))];
     }
 
     public List<Barrel> readBarrels(int quantity) {
