@@ -36,8 +36,8 @@ public class Generator {
 
     private final static int BUS_NUMBER_MIN = 1;
     private final static int BUS_NUMBER_MAX = 50;
-    private final static double BUS_MILEAGE_MIN = 1000;
-    private final static double BUS_MILEAGE_MAX = 100000;
+    private final static int BUS_MILEAGE_MIN = 1000;
+    private final static int BUS_MILEAGE_MAX = 100000;
     private final static String[] BUS_MODEL = {
             "ЛиАЗ‑5292",
             "ПАЗ‑3205",
@@ -89,7 +89,15 @@ public class Generator {
             "Tatiana"
     };
 
-    private final static Random random = new Random();
+    private final Random random;
+
+    public Generator() {
+        random = new Random();
+    }
+
+    public Generator(long seed) {
+        random = new Random(seed);
+    }
 
     private int getRandomInt(int min, int max) {
         return Math.toIntExact(Math.round(random.nextDouble() * (max - min + 1) + min));
@@ -126,9 +134,9 @@ public class Generator {
         for (int i = 0; i < quantity; i++) {
             busses.add(
                     Bus.builder()
-                            .setNumber(getRandomInt(BUS_NUMBER_MIN, BUS_NUMBER_MAX))
+                            .setNumber(String.valueOf(getRandomInt(BUS_NUMBER_MIN, BUS_NUMBER_MAX)))
                             .setModel(getRandomString(BUS_MODEL))
-                            .setMileage(getRandomDouble(BUS_MILEAGE_MIN, BUS_MILEAGE_MAX))
+                            .setMileage(getRandomInt(BUS_MILEAGE_MIN, BUS_MILEAGE_MAX))
                             .build()
             );
         }
@@ -161,8 +169,8 @@ public class Generator {
             students.add(
                     Student.builder()
                             .setGroupNumber(getRandomString(STUDENT_GROUP))
-                            .setGpa(getRandomDouble(STUDENT_GPA_MIN, STUDENT_GPA_MAX))
-                            .setRecordBookNumber(getRandomInt(STUDENT_NUMBER_MIN, STUDENT_NUMBER_MAX))
+                            .setAverageGrade(getRandomDouble(STUDENT_GPA_MIN, STUDENT_GPA_MAX))
+                            .setRecordBookNumber(String.valueOf(getRandomInt(STUDENT_NUMBER_MIN, STUDENT_NUMBER_MAX)))
                             .build()
             );
         }

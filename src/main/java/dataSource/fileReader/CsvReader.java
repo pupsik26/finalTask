@@ -64,7 +64,7 @@ public class CsvReader {
                 Bus item = Bus.builder()
                         .setMileage(FileLineValidator.parseIntField(fields, mileageIndex, HeadersConst.BUS_MILEAGE))
                         .setModel(FileLineValidator.parseStringField(fields, modelIndex, HeadersConst.BUS_MODEL))
-                        .setNumber(FileLineValidator.parseIntField(fields, numberIndex, HeadersConst.BUS_NUMBER))
+                        .setNumber(FileLineValidator.parseStringField(fields, numberIndex, HeadersConst.BUS_NUMBER))
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
@@ -130,7 +130,7 @@ public class CsvReader {
                 fields = FileLineValidator.splitFields(line, 3);
                 Student item = Student.builder()
                         .setGroupNumber(FileLineValidator.parseStringField(fields, groupNumberIndex, HeadersConst.STUDENT_GROUP))
-                        .setGpa(FileLineValidator.parseDoubleField(fields, gpaIndex, HeadersConst.STUDENT_GPA))
+                        .setAverageGrade(FileLineValidator.parseDoubleField(fields, gpaIndex, HeadersConst.STUDENT_GPA))
                         .setRecordBookNumber(FileLineValidator.parseStringField(fields, recordBookNumberIndex, HeadersConst.STUDENT_NUMBER))
                         .build();
 

@@ -83,7 +83,7 @@ public class XmlReader {
                 Bus item = Bus.builder()
                         .setMileage(FileLineValidator.parseIntField(fields, 0, HeadersConst.BUS_MILEAGE))
                         .setModel(FileLineValidator.parseStringField(fields, 1, HeadersConst.BUS_MODEL))
-                        .setNumber(FileLineValidator.parseIntField(fields, 2, HeadersConst.BUS_NUMBER))
+                        .setNumber(FileLineValidator.parseStringField(fields, 2, HeadersConst.BUS_NUMBER))
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
@@ -160,7 +160,7 @@ public class XmlReader {
 
                 Student item = Student.builder()
                         .setGroupNumber(FileLineValidator.parseStringField(fields, 0, HeadersConst.STUDENT_GROUP))
-                        .setGpa(FileLineValidator.parseDoubleField(fields, 1, HeadersConst.STUDENT_GPA))
+                        .setAverageGrade(FileLineValidator.parseDoubleField(fields, 1, HeadersConst.STUDENT_GPA))
                         .setRecordBookNumber(FileLineValidator.parseStringField(fields, 2, HeadersConst.STUDENT_NUMBER))
                         .build();
 
