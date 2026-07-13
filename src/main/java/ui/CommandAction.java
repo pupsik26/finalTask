@@ -7,6 +7,7 @@ public enum CommandAction {
 
     HELP("help", "Показать справку"),
     START("start", "Запустить сортировку"),
+    COUNT("count", "Подсчитать вхождения элемента"),
     EXIT("exit", "Выйти из программы"),
     CLEAR("clear", "Сбросить настройки"),
     UNKNOWN("", "Неизвестная команда");
