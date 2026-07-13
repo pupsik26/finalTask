@@ -10,6 +10,7 @@ import makarSorting.Strategy.MergeSortStrategy;
 import makarSorting.Strategy.QuickSortStrategy;
 import makarSorting.Strategy.SmartSorter;
 import makarSorting.Strategy.SortStrategy;
+import ui.service.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class ConsoleUI {
     private final Scanner scanner;
     private final SortFacade sortFacade;
     private final EvenFieldSorter evenFieldSorter;
+    private final ElementCounter elementCounter;
 
     private int selectedClassType;
     private int selectedDataSourceType;
@@ -40,6 +42,7 @@ public class ConsoleUI {
         this.scanner = scanner;
         this.sortFacade = new SortFacade();
         this.evenFieldSorter = new EvenFieldSorter();
+        this.elementCounter = new ElementCounter();
         this.currentData = new ArrayList<>();
         this.selectedSortType = SortType.NORMAL;
         this.selectedAlgorithm = SortAlgorithm.SMART;
@@ -99,6 +102,10 @@ public class ConsoleUI {
                 return handleStartCommand(command);
             }
 
+            if (command.getAction() == CommandAction.COUNT) {
+                return handleCountCommand(command);
+            }
+
             if (command.isUnknown()) {
                 MenuPrinter.printError("Неизвестная команда: '" + rawInput.split("\\s+")[0] + "'");
                 MenuPrinter.printInfo("Введите 'help' для справки");
@@ -112,6 +119,75 @@ public class ConsoleUI {
             MenuPrinter.printInfo("Введите 'help' для справки");
             return true;
         }
+    }
+
+    private boolean handleCountCommand(Command command) {
+        if (currentData.isEmpty()) {
+            MenuPrinter.printError("Сначала загрузите данные (выберите класс, источник и размер)!");
+            return true;
+        }
+
+        String targetValue = command.getSearchValue().orElse(null);
+        int threads = command.getThreadCount().orElse(4);
+
+        if (targetValue == null) {
+            System.out.print("Введите строковое представление элемента для поиска (точно как в выводе, например: Car{power=150, model='Toyota Camry', year=2020}): ");
+            targetValue = scanner.nextLine().trim();
+        }
+
+        if (threads <= 0) threads = 4;
+
+        executeCount(targetValue, threads);
+        return true;
+    }
+
+    private void handleCountExecution() {
+        if (currentData.isEmpty()) {
+            MenuPrinter.printError("Сначала загрузите данные (выберите класс, источник и размер)!");
+            return;
+        }
+
+        System.out.println("\n💡 Подсказка: скопируйте строку элемента из результата сортировки выше.");
+        System.out.print("Введите строковое представление элемента для поиска: ");
+        String targetValue = scanner.nextLine().trim();
+
+        System.out.print("Введите количество потоков (по умолчанию 4, макс 16): ");
+        String threadsInput = scanner.nextLine().trim();
+        int threads = 4;
+        if (!threadsInput.isEmpty()) {
+            try {
+                threads = Integer.parseInt(threadsInput);
+                if (threads < 1 || threads > 16) threads = 4;
+            } catch (NumberFormatException e) {
+                threads = 4;
+            }
+        }
+
+        executeCount(targetValue, threads);
+    }
+
+    private void executeCount(String targetValue, int threads) {
+        if (targetValue.isEmpty()) {
+            MenuPrinter.printError("Значение для поиска не может быть пустым!");
+            return;
+        }
+
+        MenuPrinter.printInfo("Запуск многопоточного подсчета (" + threads + " поток(ов))...");
+
+        long startTime = System.nanoTime();
+
+        long count = elementCounter.countOccurrences(currentData, targetValue, threads);
+
+        long endTime = System.nanoTime();
+        double elapsedMs = (endTime - startTime) / 1_000_000.0;
+
+        System.out.println("\n╔════════════════════════════════════════╗");
+        System.out.println("║       РЕЗУЛЬТАТ ПОДСЧЕТА               ║");
+        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("Искомый элемент: " + targetValue);
+        System.out.println("Количество вхождений: " + count);
+        System.out.println("Размер коллекции: " + currentData.size());
+        System.out.printf("⏱ Время выполнения: %.3f мс%n%n", elapsedMs);
     }
 
     private boolean handleStartCommand(Command command) {
@@ -143,9 +219,10 @@ public class ConsoleUI {
                 case 5 -> { handleSortTypeSelection(); yield true; }
                 case 6 -> { handleAlgorithmSelection(); yield true; }
                 case 7 -> { handleSortExecution(); yield true; }
-                case 8 -> { System.out.println("\nДо свидания!"); yield false; }
+                case 8 -> { handleCountExecution(); yield true; }
+                case 9 -> { System.out.println("\nДо свидания!"); yield false; }
                 default -> {
-                    MenuPrinter.printError("Выберите пункт от 1 до 8");
+                    MenuPrinter.printError("Выберите пункт от 1 до 9");
                     yield true;
                 }
             };
@@ -266,9 +343,6 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Создаёт стратегию сортировки с ЯВНЫМ указанием типа <Object>.
-     */
     private SortStrategy<Object> createStrategy(SortAlgorithm algorithm) {
         return switch (algorithm) {
             case MERGE -> new MergeSortStrategy<Object>();
@@ -477,7 +551,7 @@ public class ConsoleUI {
         System.out.println("""
                 
                 ╔════════════════════════════════════════╗
-                   ПРОГРАММА СОРТИРОВКИ DАННЫХ          ║
+                   ПРОГРАММА СОРТИРОВКИ ДАННЫХ          ║
                 ║   Версия 5.0 (с выбором алгоритма)     ║
                 ║   Java 17                              ║
                 ╚════════════════════════════════════════╝

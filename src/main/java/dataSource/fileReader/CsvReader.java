@@ -5,7 +5,6 @@ import ivans.task.validators.file.input.FileLineValidator;
 import ivans.task.validators.objects.ObjectValidatorFactory;
 
 import java.io.*;
-import java.io.FileReader;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +63,7 @@ public class CsvReader {
                 Bus item = Bus.builder()
                         .setMileage(FileLineValidator.parseIntField(fields, mileageIndex, HeadersConst.BUS_MILEAGE))
                         .setModel(FileLineValidator.parseStringField(fields, modelIndex, HeadersConst.BUS_MODEL))
-                        .setNumber(String.valueOf(FileLineValidator.parseIntField(fields, numberIndex, HeadersConst.BUS_NUMBER)))
+                        .setNumber(FileLineValidator.parseStringField(fields, numberIndex, HeadersConst.BUS_NUMBER))
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);

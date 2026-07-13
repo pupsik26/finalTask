@@ -1,17 +1,12 @@
 package makarSorting;
 
 import makarSorting.Strategy.SmartSorter;
-
 import java.util.Comparator;
 import java.util.List;
 
 public class SortFacade {
-
-    private final ComparatorRegister comparatorRegister =
-            new ComparatorRegister();
-
-    private final EvenFieldSorter evenFieldSorter =
-            new EvenFieldSorter();
+    private final ComparatorRegister comparatorRegister = new ComparatorRegister();
+    private final EvenFieldSorter evenFieldSorter = new EvenFieldSorter();
 
     public <T> void sort(
             List<Object> list,

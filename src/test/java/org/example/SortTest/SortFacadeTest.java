@@ -1,7 +1,6 @@
 package org.example.SortTest;
 
-import ModelBuilderClass.Builder.UserBuilder;
-import ModelBuilderClass.ModelClass.User;
+import ModelBuilderClass.User;
 import makarSorting.SortFacade;
 import org.junit.jupiter.api.Test;
 
@@ -17,31 +16,31 @@ public class SortFacadeTest {
     void shouldSortUsersByName() {
 
         List<User> users = new ArrayList<>(List.of(
-                new UserBuilder()
+                User.builder()
                         .setName("ivan")
                         .setPassword("qwerty123")
                         .setEmail("ivan@mail.com")
                         .build(),
 
-                new UserBuilder()
+                User.builder()
                         .setName("alex")
                         .setPassword("pass2024")
                         .setEmail("alex@gmail.com")
                         .build(),
 
-                new UserBuilder()
+                User.builder()
                         .setName("maria")
                         .setPassword("maria777")
                         .setEmail("maria@yandex.ru")
                         .build(),
 
-                new UserBuilder()
+                User.builder()
                         .setName("sergey")
                         .setPassword("abc123")
                         .setEmail("sergey@mail.ru")
                         .build(),
 
-                new UserBuilder()
+                User.builder()
                         .setName("anna")
                         .setPassword("password")
                         .setEmail("anna@gmail.com")

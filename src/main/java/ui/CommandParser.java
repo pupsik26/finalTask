@@ -3,10 +3,6 @@ package ui;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Парсер команд пользователя.
- * Поддерживает флаги: -c, -s, -n, -f, -e, -a, -p
- */
 public final class CommandParser {
 
     private static final Map<String, String> FLAG_ALIASES = new HashMap<>();
@@ -19,6 +15,8 @@ public final class CommandParser {
         FLAG_ALIASES.put("-p", "--path");
         FLAG_ALIASES.put("-e", "--even");
         FLAG_ALIASES.put("-a", "--algo");
+        FLAG_ALIASES.put("-t", "--threads");
+        FLAG_ALIASES.put("-v", "--value");
     }
 
     private CommandParser() {}
@@ -46,7 +44,7 @@ public final class CommandParser {
 
             if (!token.startsWith("-")) {
                 throw new CommandParseException(
-                        "Неожиданный аргумент: '" + token + "'. Используйте флаги (-c, -s, -n, -f, -e, -a, -p)");
+                        "Неожиданный аргумент: '" + token + "'. Используйте флаги (-c, -s, -n, -f, -e, -a, -p, -t, -v)");
             }
 
             String flag = normalizeFlag(token);
@@ -83,7 +81,9 @@ public final class CommandParser {
             case "--size" -> builder.setCollectionSize(parseIntFlag(flag, value, 1, 10000));
             case "--field" -> builder.setFieldIndex(parseIntFlag(flag, value, 1, 3));
             case "--algo" -> builder.setAlgorithmCode(parseIntFlag(flag, value, 1, 3));
+            case "--threads" -> builder.setThreadCount(parseIntFlag(flag, value, 1, 16));
             case "--path" -> builder.setFilePath(value);
+            case "--value" -> builder.setSearchValue(value);
             default -> throw new CommandParseException("Неизвестный флаг: '" + flag + "'");
         }
     }

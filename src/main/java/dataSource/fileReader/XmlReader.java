@@ -79,11 +79,10 @@ public class XmlReader {
                         node.getAttribute(HeadersConst.BUS_MODEL),
                         node.getAttribute(HeadersConst.BUS_NUMBER)
                 };
-
                 Bus item = Bus.builder()
                         .setMileage(FileLineValidator.parseIntField(fields, 0, HeadersConst.BUS_MILEAGE))
                         .setModel(FileLineValidator.parseStringField(fields, 1, HeadersConst.BUS_MODEL))
-                        .setNumber(String.valueOf(FileLineValidator.parseIntField(fields, 2, HeadersConst.BUS_NUMBER)))
+                        .setNumber(FileLineValidator.parseStringField(fields, 2, HeadersConst.BUS_NUMBER))
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);

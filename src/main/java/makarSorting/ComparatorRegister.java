@@ -36,9 +36,7 @@ public class ComparatorRegister {
             )
     );
 
-    public <T> Comparator<T> findComparator(Class<T> someClass,
-                                            String someField) {
-
+    public <T> Comparator<T> findComparator(Class<T> someClass, String someField) {
         Map<String, Comparator<?>> comparatorMap = registry.get(someClass);
 
         if (comparatorMap == null) {
