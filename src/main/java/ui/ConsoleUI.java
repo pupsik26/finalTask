@@ -122,8 +122,8 @@ public class ConsoleUI {
     }
 
     private boolean handleCountCommand(Command command) {
-        command.getThreadCount().ifPresent(v -> { /* можно сохранить в поле, если нужно */ });
-        command.getSearchValue().ifPresent(v -> { /* можно сохранить в поле, если нужно */ });
+        command.getThreadCount().ifPresent(v -> {});
+        command.getSearchValue().ifPresent(v -> {});
 
         if (currentData.isEmpty()) {
             MenuPrinter.printError("Сначала загрузите данные (выберите класс, источник и размер)!");
