@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import daryaClassStream.ModelBuilderClass.Barrel;
+import ModelBuilderClass.Barrel;
 import ivans.task.exceptions.InvalidDataException;
 
 class BarrelValidator implements TypeValidator<Barrel> {

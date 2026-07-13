@@ -26,7 +26,8 @@ public final class MenuPrinter {
                 (algorithm != null ? " [" + algorithm.getDescription() + "]" : ""));
         System.out.println("7. Выполнить сортировку");
         System.out.println("8. Подсчитать вхождения элемента (многопоточно)");
-        System.out.println("9. Выход");
+        System.out.println("9. Сохранить результат в файл (CSV/JSON/XML)");
+        System.out.println("10. Выход");
         System.out.println();
     }
 
@@ -135,7 +136,7 @@ public final class MenuPrinter {
               exit              Выйти из программы
               clear             Сбросить настройки
               start [флаги]     Запустить сортировку
-              count [флаги]     Подсчитать вхождения элемента (многопоточно)
+              save [флаги]      Сохранить результат в файл
             
             📌 ФЛАГИ:
               -c, --class    <1-5>   Класс (1-User, 2-Student, 3-Car, 4-Bus, 5-Barrel)
@@ -145,8 +146,9 @@ public final class MenuPrinter {
               -e, --even             Сортировка только чётных значений (доп. задание 1)
               -a, --algo     <1-3>   Алгоритм (1-Merge, 2-Quick, 3-Smart)
               -p, --path     <путь>  Путь к файлу (для source=3)
-              -t, --threads  <1-16>  Количество потоков для подсчета (для count)
-              -v, --value    <строка> Искомое значение (для count)
+            
+            📌 ФЛАГИ для save:
+              -o, --output <путь>  Путь к файлу (например: result.csv)
             
             📌 ТИПЫ СОРТИРОВКИ:
               Обычная — сортирует все объекты по выбранному полю
@@ -163,12 +165,12 @@ public final class MenuPrinter {
             📌 ПРИМЕРЫ:
               start -c 3 -s 2 -n 10 -f 1 -a 1
               ➜ Сортировка Car по мощности (Merge Sort, 10 шт, рандом)
-              
+            
               start -c 3 -s 2 -n 10 -f 1 -e -a 2
               ➜ Сортировка только чётных значений мощности Car (Quick Sort)
-              
+            
               start -c 2 -s 3 -p students.csv -f 2 -a 3
-              ➜ Сортировка Student по gpa из файла (Smart Sorter)
+              ➜ Сортировка Student по averageGrade из файла (Smart Sorter)
             
             """);
     }
@@ -207,7 +209,7 @@ public final class MenuPrinter {
     private static String[] getFieldNames(int classType) {
         return switch (classType) {
             case 1 -> new String[]{"name", "password", "email"};
-            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
+            case 2 -> new String[]{"groupNumber", "averageGrade", "recordBookNumber"};
             case 3 -> new String[]{"power", "model", "year"};
             case 4 -> new String[]{"number", "model", "mileage"};
             case 5 -> new String[]{"volume", "storedMaterial", "material"};
@@ -216,7 +218,9 @@ public final class MenuPrinter {
     }
 
     private static String getFieldName(int classType, int fieldIndex) {
-        if (classType == 0 || fieldIndex == 0) return "Не выбрано";
+        if (classType == 0 || fieldIndex == 0) {
+            return "Не выбрано";
+        }
         String[] fields = getFieldNames(classType);
         return fieldIndex >= 1 && fieldIndex <= 3 ? fields[fieldIndex - 1] : "Неизвестно";
     }
