@@ -1,5 +1,7 @@
-import Model.User;
-import Sort.SortFacade;
+package org.example.SortTest;
+
+import ModelBuilderClass.User;
+import makarSorting.SortFacade;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,16 +16,40 @@ public class SortFacadeTest {
     void shouldSortUsersByName() {
 
         List<User> users = new ArrayList<>(List.of(
-                new User("ivan", "qwerty123", "ivan@mail.com"),
-                new User("alex", "pass2024", "alex@gmail.com"),
-                new User("maria", "maria777", "maria@yandex.ru"),
-                new User("sergey", "abc123", "sergey@mail.ru"),
-                new User("anna", "password", "anna@gmail.com")
+                User.builder()
+                        .setName("ivan")
+                        .setPassword("qwerty123")
+                        .setEmail("ivan@mail.com")
+                        .build(),
+
+                User.builder()
+                        .setName("alex")
+                        .setPassword("pass2024")
+                        .setEmail("alex@gmail.com")
+                        .build(),
+
+                User.builder()
+                        .setName("maria")
+                        .setPassword("maria777")
+                        .setEmail("maria@yandex.ru")
+                        .build(),
+
+                User.builder()
+                        .setName("sergey")
+                        .setPassword("abc123")
+                        .setEmail("sergey@mail.ru")
+                        .build(),
+
+                User.builder()
+                        .setName("anna")
+                        .setPassword("password")
+                        .setEmail("anna@gmail.com")
+                        .build()
         ));
 
         SortFacade facade = new SortFacade();
 
-        facade.sort(users, User.class, "name");
+        facade.sort((List<Object>) (List<?>) users, User.class, "name");
 
         List<String> names = users.stream()
                 .map(User::getName)
@@ -50,7 +76,7 @@ public class SortFacadeTest {
 
         assertThrows(
                 NoSuchElementException.class,
-                () -> facade.sort(users, User.class, "abrakadabra")
+                () -> facade.sort((List<Object>) (List<?>) users, User.class, "abrakadabra")
         );
     }
 }

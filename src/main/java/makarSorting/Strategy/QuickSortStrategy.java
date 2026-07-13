@@ -1,11 +1,11 @@
-package Sort;
+package makarSorting.Strategy;
 
 import java.util.Comparator;
 import java.util.List;
 
-class QuickSortStrategy<T> implements SortStrategy<T> {
+public class QuickSortStrategy<T> implements SortStrategy<T> {
 
-    private void quickSort(List<T> list, int left, int right, Comparator<? super T> comparator) {
+    public void quickSort(List<T> list, int left, int right, Comparator<? super T> comparator) {
 
         if (left >= right) {
             return;
