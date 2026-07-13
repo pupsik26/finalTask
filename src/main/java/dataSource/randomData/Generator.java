@@ -61,22 +61,13 @@ public class Generator {
             "Elena", "Andrew", "Olga", "Igor", "Tatiana"
     };
     private int getRandomInt(int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException("min (" + min + ") не может быть больше max (" + max + ")");
-        }
         return random.nextInt(max - min + 1) + min;
     }
     private double getRandomDouble(double min, double max) {
-        if (min > max) {
-            throw new IllegalArgumentException("min (" + min + ") не может быть больше max (" + max + ")");
-        }
         double value = random.nextDouble() * (max - min) + min;
         return Math.round(value * 1000.0) / 1000.0;
     }
     private String getRandomString(String[] lines) {
-        if (lines == null || lines.length == 0) {
-            throw new IllegalArgumentException("Массив строк не может быть пустым");
-        }
         return lines[random.nextInt(lines.length)];
     }
 
