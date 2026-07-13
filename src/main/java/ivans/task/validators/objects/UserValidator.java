@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ivans.task.common.classes.User;
+import ModelBuilderClass.User;
 import ivans.task.exceptions.InvalidDataException;
 
 class UserValidator implements TypeValidator<User> {

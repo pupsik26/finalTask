@@ -19,8 +19,6 @@ public final class CommandParser {
         FLAG_ALIASES.put("-p", "--path");
         FLAG_ALIASES.put("-e", "--even");
         FLAG_ALIASES.put("-a", "--algo");
-        FLAG_ALIASES.put("-t", "--threads");
-        FLAG_ALIASES.put("-v", "--value");
         FLAG_ALIASES.put("-o", "--output");
     }
 
@@ -86,9 +84,7 @@ public final class CommandParser {
             case "--size" -> builder.setCollectionSize(parseIntFlag(flag, value, 1, 10000));
             case "--field" -> builder.setFieldIndex(parseIntFlag(flag, value, 1, 3));
             case "--algo" -> builder.setAlgorithmCode(parseIntFlag(flag, value, 1, 3));
-            case "--threads" -> builder.setThreadCount(parseIntFlag(flag, value, 1, 16));
             case "--path" -> builder.setFilePath(value);
-            case "--value" -> builder.setSearchValue(value);
             case "--output" -> builder.setOutputPath(value);
             default -> throw new CommandParseException("Неизвестный флаг: '" + flag + "'");
         }
