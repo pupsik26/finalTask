@@ -4,13 +4,14 @@ import daryaClassStream.ModelBuilderClass.*;
 import dataSource.consoleReader.ConsoleReader;
 import dataSource.fileReader.FileReader;
 import dataSource.randomData.Generator;
+import fileWriter.FileWriter;
 import makarSorting.EvenFieldSorter;
 import makarSorting.SortFacade;
 import makarSorting.Strategy.MergeSortStrategy;
 import makarSorting.Strategy.QuickSortStrategy;
 import makarSorting.Strategy.SmartSorter;
 import makarSorting.Strategy.SortStrategy;
-import ui.service.*;
+import ui.service.ElementCounter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class ConsoleUI {
         this.evenFieldSorter = new EvenFieldSorter();
         this.elementCounter = new ElementCounter();
         this.currentData = new ArrayList<>();
+        this.fileWriter = new FileWriter();
         this.selectedSortType = SortType.NORMAL;
         this.selectedAlgorithm = SortAlgorithm.SMART;
     }
@@ -64,7 +66,9 @@ public class ConsoleUI {
             System.out.print("\n> ");
             String rawInput = scanner.nextLine().trim();
 
-            if (rawInput.isEmpty()) continue;
+            if (rawInput.isEmpty()) {
+                continue;
+            }
 
             if (isCommandMode(rawInput)) {
                 isRunning = handleCommand(rawInput);
@@ -102,8 +106,8 @@ public class ConsoleUI {
                 return handleStartCommand(command);
             }
 
-            if (command.getAction() == CommandAction.COUNT) {
-                return handleCountCommand(command);
+            if (command.getAction() == CommandAction.SAVE) {
+                return handleSaveCommand(command);
             }
 
             if (command.isUnknown()) {
@@ -123,22 +127,59 @@ public class ConsoleUI {
 
     private boolean handleCountCommand(Command command) {
         if (currentData.isEmpty()) {
-            MenuPrinter.printError("Сначала загрузите данные (выберите класс, источник и размер)!");
+            MenuPrinter.printError("Нет данных для сохранения. Сначала загрузите данные.");
             return true;
         }
 
-        String targetValue = command.getSearchValue().orElse(null);
-        int threads = command.getThreadCount().orElse(4);
-
-        if (targetValue == null) {
-            System.out.print("Введите строковое представление элемента для поиска (точно как в выводе, например: Car{power=150, model='Toyota Camry', year=2020}): ");
-            targetValue = scanner.nextLine().trim();
+        String path = command.getOutputPath().orElse(null);
+        if (path == null || path.isBlank()) {
+            System.out.print("Введите путь для сохранения (например, result.csv): ");
+            path = scanner.nextLine().trim();
         }
 
-        if (threads <= 0) threads = 4;
-
-        executeCount(targetValue, threads);
+        executeSave(path);
         return true;
+    }
+
+    private void handleSaveExecution() {
+        if (currentData.isEmpty()) {
+            MenuPrinter.printError("Нет данных для сохранения. Сначала загрузите данные.");
+            return;
+        }
+
+        System.out.print("Введите путь для сохранения (result.csv, result.json или result.xml): ");
+        String path = scanner.nextLine().trim();
+
+        if (path.isBlank()) {
+            MenuPrinter.printError("Путь к файлу не может быть пустым.");
+            return;
+        }
+
+        executeSave(path);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void executeSave(String filepath) {
+        try {
+            String lowerPath = filepath.toLowerCase();
+            MenuPrinter.printInfo("Сохранение данных...");
+
+            if (lowerPath.endsWith(".csv")) {
+                fileWriter.writeCsv(filepath, currentData);
+            } else if (lowerPath.endsWith(".json")) {
+                fileWriter.writeJson(filepath, currentData);
+            } else if (lowerPath.endsWith(".xml")) {
+                fileWriter.writeXml(filepath, currentData);
+            } else {
+                MenuPrinter.printError("Неподдерживаемое расширение. Используйте .csv, .json или .xml");
+                return;
+            }
+
+            MenuPrinter.printSuccess("Данные успешно сохранены в: " + filepath);
+
+        } catch (Exception e) {
+            MenuPrinter.printError("Ошибка при сохранении файла: " + e.getMessage());
+        }
     }
 
     private void handleCountExecution() {
@@ -157,7 +198,9 @@ public class ConsoleUI {
         if (!threadsInput.isEmpty()) {
             try {
                 threads = Integer.parseInt(threadsInput);
-                if (threads < 1 || threads > 16) threads = 4;
+                if (threads < 1 || threads > 16) {
+                    threads = 4;
+                }
             } catch (NumberFormatException e) {
                 threads = 4;
             }
@@ -191,6 +234,9 @@ public class ConsoleUI {
     }
 
     private boolean handleStartCommand(Command command) {
+        boolean classChanged = command.getClassType().isPresent()
+                && command.getClassType().getAsInt() != selectedClassType;
+
         command.getClassType().ifPresent(v -> selectedClassType = v);
         command.getDataSourceType().ifPresent(v -> selectedDataSourceType = v);
         command.getCollectionSize().ifPresent(v -> collectionSize = v);
@@ -198,6 +244,10 @@ public class ConsoleUI {
         command.getSortType().ifPresent(v -> selectedSortType = v);
         command.getAlgorithmCode().ifPresent(v -> selectedAlgorithm = SortAlgorithm.fromCode(v));
         command.getFilePath().ifPresent(v -> filePath = v);
+
+        if (classChanged) {
+            currentData.clear();
+        }
 
         if (!validateParametersInteractive()) {
             return true;
@@ -220,7 +270,8 @@ public class ConsoleUI {
                 case 6 -> { handleAlgorithmSelection(); yield true; }
                 case 7 -> { handleSortExecution(); yield true; }
                 case 8 -> { handleCountExecution(); yield true; }
-                case 9 -> { System.out.println("\nДо свидания!"); yield false; }
+                case 9 -> { handleSaveExecution(); yield true; }
+                case 10 -> { System.out.println("\nДо свидания!"); yield false; }
                 default -> {
                     MenuPrinter.printError("Выберите пункт от 1 до 9");
                     yield true;
@@ -296,7 +347,9 @@ public class ConsoleUI {
     }
 
     private void handleSortExecution() {
-        if (!validateParametersInteractive()) return;
+        if (!validateParametersInteractive()) {
+            return;
+        }
         executeSort();
     }
 
@@ -485,7 +538,9 @@ public class ConsoleUI {
             System.out.print(prompt);
             try {
                 int value = Integer.parseInt(scanner.nextLine().trim());
-                if (value >= min && value <= max) return value;
+                if (value >= min && value <= max) {
+                    return value;
+                }
                 System.out.println("Значение должно быть от " + min + " до " + max);
             } catch (NumberFormatException e) {
                 System.out.println("Введите корректное число");
@@ -527,7 +582,7 @@ public class ConsoleUI {
     private String getFieldName(int classType, int fieldIndex) {
         String[] fields = switch (classType) {
             case 1 -> new String[]{"name", "password", "email"};
-            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
+            case 2 -> new String[]{"groupNumber", "averageGrade", "recordBookNumber"};
             case 3 -> new String[]{"power", "model", "year"};
             case 4 -> new String[]{"number", "model", "mileage"};
             case 5 -> new String[]{"volume", "storedMaterial", "material"};
