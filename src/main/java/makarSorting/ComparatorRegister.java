@@ -16,7 +16,7 @@ public class ComparatorRegister {
             ),
             Student.class, Map.of(
                     "groupNumber", Comparator.comparing(Student::getGroupNumber),
-                    "gpa", Comparator.comparing(Student::getAverageGrade),
+                    "averageGrade", Comparator.comparing(Student::getAverageGrade),
                     "recordBookNumber", Comparator.comparing(Student::getRecordBookNumber)
             ),
             Car.class, Map.of(
