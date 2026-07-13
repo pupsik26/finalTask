@@ -1,0 +1,11 @@
+<cars>
+    <car power="300"
+         model="ABCD"
+         year="2000" />
+    <car power="300"
+         model="ABC"
+         year="2000" />
+    <car power="300"
+         model="ABCDEF"
+         year="2000" />
+</cars>
