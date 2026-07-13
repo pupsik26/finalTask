@@ -11,9 +11,9 @@ public final class MenuPrinter {
                                      int collectionSize, int selectedField,
                                      SortType sortType, SortAlgorithm algorithm) {
 
-        System.out.println("\n════════════════════════════════════════╗");
-        System.out.println("║         ГЛАВНОЕ МЕНЮ                   ");
-        System.out.println("╚════════════════════════════════════════╝");
+        System.out.println("\n╔═══════════════════════════════════════╗");
+        System.out.println("║         ГЛАВНОЕ МЕНЮ                  ║");
+        System.out.println("╚═══════════════════════════════════════╝");
 
         System.out.println("1. Выбрать класс для сортировки" +
                 getStatusText(selectedClass, () -> getClassName(selectedClass)));
