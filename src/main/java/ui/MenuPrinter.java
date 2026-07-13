@@ -28,8 +28,9 @@ public final class MenuPrinter {
         System.out.println("6. Выбрать алгоритм сортировки" +
                 (algorithm != null ? " [" + algorithm.getDescription() + "]" : ""));
         System.out.println("7. Выполнить сортировку");
-        System.out.println("8. Подсчитать вхождения элемента (многопоточно)"); // <-- НОВОЕ
-        System.out.println("9. Выход");
+        System.out.println("8. Подсчитать вхождения элемента (многопоточно)");
+        System.out.println("9. Сохранить результат в файл (CSV/JSON/XML)");
+        System.out.println("10. Выход");
         System.out.println();
     }
 
@@ -139,6 +140,7 @@ public final class MenuPrinter {
               clear             Сбросить настройки
               start [флаги]     Запустить сортировку
               count [флаги]     Подсчитать вхождения элемента (многопоточно)
+              save [флаги]      Сохранить результат в файл
             
             📌 ФЛАГИ:
               -c, --class    <1-5>   Класс (1-User, 2-Student, 3-Car, 4-Bus, 5-Barrel)
@@ -150,6 +152,9 @@ public final class MenuPrinter {
               -p, --path     <путь>  Путь к файлу (для source=3)
               -t, --threads  <1-16>  Количество потоков для подсчета (для count)
               -v, --value    <строка> Искомое значение (для count)
+            
+            📌 ФЛАГИ для save:
+              -o, --output <путь>  Путь к файлу (например: result.csv)
             
             📌 ТИПЫ СОРТИРОВКИ:
               Обычная — сортирует все объекты по выбранному полю

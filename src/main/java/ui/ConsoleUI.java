@@ -4,13 +4,14 @@ import ModelBuilderClass.*;
 import dataSource.consoleReader.ConsoleReader;
 import dataSource.fileReader.FileReader;
 import dataSource.randomData.Generator;
+import fileWriter.FileWriter;
 import makarSorting.EvenFieldSorter;
 import makarSorting.SortFacade;
 import makarSorting.Strategy.MergeSortStrategy;
 import makarSorting.Strategy.QuickSortStrategy;
 import makarSorting.Strategy.SmartSorter;
 import makarSorting.Strategy.SortStrategy;
-import ui.service.*;
+import ui.service.ElementCounter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class ConsoleUI {
     private String filePath;
     private List<Object> currentData;
     private final ElementCounter elementCounter;
+    private final FileWriter fileWriter;
 
     public ConsoleUI(Scanner scanner) {
         this.scanner = scanner;
@@ -44,6 +46,7 @@ public class ConsoleUI {
         this.evenFieldSorter = new EvenFieldSorter();
         this.elementCounter = new ElementCounter();
         this.currentData = new ArrayList<>();
+        this.fileWriter = new FileWriter();
         this.selectedSortType = SortType.NORMAL;
         this.selectedAlgorithm = SortAlgorithm.SMART;
     }
@@ -108,6 +111,10 @@ public class ConsoleUI {
                 return handleCountCommand(command);
             }
 
+            if (command.getAction() == CommandAction.SAVE) {
+                return handleSaveCommand(command);
+            }
+
             if (command.isUnknown()) {
                 MenuPrinter.printError("Неизвестная команда: '" + rawInput.split("\\s+")[0] + "'");
                 MenuPrinter.printInfo("Введите 'help' для справки");
@@ -120,6 +127,63 @@ public class ConsoleUI {
             MenuPrinter.printError(e.getMessage());
             MenuPrinter.printInfo("Введите 'help' для справки");
             return true;
+        }
+    }
+
+    private boolean handleSaveCommand(Command command) {
+        if (currentData.isEmpty()) {
+            MenuPrinter.printError("Нет данных для сохранения. Сначала загрузите данные.");
+            return true;
+        }
+
+        String path = command.getOutputPath().orElse(null);
+        if (path == null || path.isBlank()) {
+            System.out.print("Введите путь для сохранения (например, result.csv): ");
+            path = scanner.nextLine().trim();
+        }
+
+        executeSave(path);
+        return true;
+    }
+
+    private void handleSaveExecution() {
+        if (currentData.isEmpty()) {
+            MenuPrinter.printError("Нет данных для сохранения. Сначала загрузите данные.");
+            return;
+        }
+
+        System.out.print("Введите путь для сохранения (result.csv, result.json или result.xml): ");
+        String path = scanner.nextLine().trim();
+
+        if (path.isBlank()) {
+            MenuPrinter.printError("Путь к файлу не может быть пустым.");
+            return;
+        }
+
+        executeSave(path);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void executeSave(String filepath) {
+        try {
+            String lowerPath = filepath.toLowerCase();
+            MenuPrinter.printInfo("Сохранение данных...");
+
+            if (lowerPath.endsWith(".csv")) {
+                fileWriter.writeCsv(filepath, currentData);
+            } else if (lowerPath.endsWith(".json")) {
+                fileWriter.writeJson(filepath, currentData);
+            } else if (lowerPath.endsWith(".xml")) {
+                fileWriter.writeXml(filepath, currentData);
+            } else {
+                MenuPrinter.printError("Неподдерживаемое расширение. Используйте .csv, .json или .xml");
+                return;
+            }
+
+            MenuPrinter.printSuccess("Данные успешно сохранены в: " + filepath);
+
+        } catch (Exception e) {
+            MenuPrinter.printError("Ошибка при сохранении файла: " + e.getMessage());
         }
     }
 
@@ -200,6 +264,9 @@ public class ConsoleUI {
     }
 
     private boolean handleStartCommand(Command command) {
+        boolean classChanged = command.getClassType().isPresent()
+                && command.getClassType().getAsInt() != selectedClassType;
+
         command.getClassType().ifPresent(v -> selectedClassType = v);
         command.getDataSourceType().ifPresent(v -> selectedDataSourceType = v);
         command.getCollectionSize().ifPresent(v -> collectionSize = v);
@@ -207,6 +274,10 @@ public class ConsoleUI {
         command.getSortType().ifPresent(v -> selectedSortType = v);
         command.getAlgorithmCode().ifPresent(v -> selectedAlgorithm = SortAlgorithm.fromCode(v));
         command.getFilePath().ifPresent(v -> filePath = v);
+
+        if (classChanged) {
+            currentData.clear();
+        }
 
         if (!validateParametersInteractive()) {
             return true;
@@ -229,9 +300,10 @@ public class ConsoleUI {
                 case 6 -> { handleAlgorithmSelection(); yield true; }
                 case 7 -> { handleSortExecution(); yield true; }
                 case 8 -> { handleCountExecution(); yield true; }
-                case 9 -> { System.out.println("\nДо свидания!"); yield false; }
+                case 9 -> { handleSaveExecution(); yield true; }
+                case 10 -> { System.out.println("\nДо свидания!"); yield false; }
                 default -> {
-                    MenuPrinter.printError("Выберите пункт от 1 до 8");
+                    MenuPrinter.printError("Выберите пункт от 1 до 10");
                     yield true;
                 }
             };
