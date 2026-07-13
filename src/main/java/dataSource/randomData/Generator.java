@@ -100,15 +100,16 @@ public class Generator {
     }
 
     private int getRandomInt(int min, int max) {
-        return Math.toIntExact(Math.round(random.nextDouble() * (max - min + 1) + min));
+        return random.nextInt(max - min + 1) + min;
     }
 
     private double getRandomDouble(double min, double max) {
-        return Math.round((random.nextDouble() * (max - min + 1) + min) * 1000) / 1000.0;
+        double value = random.nextDouble() * (max - min) + min;
+        return Math.round(value * 1000.0) / 1000.0;
     }
 
     private String getRandomString(String[] lines) {
-        return lines[Math.toIntExact(Math.round(random.nextDouble() * (lines.length)))];
+        return lines[random.nextInt(lines.length)];
     }
 
     public List<Barrel> readBarrels(int quantity) {
