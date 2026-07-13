@@ -36,7 +36,8 @@ class ConsoleUITest {
     @Test
     @DisplayName("Приветствие отображается при запуске")
     void shouldShowWelcomeMessage() {
-        createUI("10\n").run();
+        // 11 - это новый пункт "Выход"
+        createUI("11\n").run();
         String output = outContent.toString();
         assertTrue(output.contains("ПРОГРАММА СОРТИРОВКИ"));
     }
@@ -50,9 +51,10 @@ class ConsoleUITest {
     }
 
     @Test
-    @DisplayName("Пункт 10 (выход) завершает работу")
-    void shouldExitOnMenuItem10() {
-        createUI("10\n").run();
+    @DisplayName("Пункт 11 (выход) завершает работу")
+    void shouldExitOnMenuItem11() {
+        // 11 - это новый пункт "Выход"
+        createUI("11\n").run();
         String output = outContent.toString();
         assertTrue(output.contains("До свидания"));
     }
@@ -91,11 +93,11 @@ class ConsoleUITest {
     }
 
     @Test
-    @DisplayName("Выбор несуществующего пункта меню (>10) выдаёт ошибку")
+    @DisplayName("Выбор несуществующего пункта меню (>11) выдаёт ошибку")
     void shouldHandleOutOfRangeMenuChoice() {
-        createUI("99\nexit\n").run();
+        createUI("99\n11\n").run();
         String output = outContent.toString();
-        assertTrue(output.contains("1 до 10"));
+        assertTrue(output.contains("1 до 11"));
     }
 
     @Test
@@ -117,9 +119,9 @@ class ConsoleUITest {
     @Test
     @DisplayName("Попытка подсчёта (пункт 8) без загруженных данных выдаёт ошибку")
     void shouldFailToCountWithoutData() {
-        createUI("8\n10\n").run();
+        // 8 - подсчёт, 11 - выход
+        createUI("8\n11\n").run();
         String output = outContent.toString();
-
         assertTrue(output.contains("Нет данных") || output.contains("загрузите"));
     }
 

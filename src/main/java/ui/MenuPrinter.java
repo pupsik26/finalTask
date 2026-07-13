@@ -30,7 +30,8 @@ public final class MenuPrinter {
         System.out.println("7. Выполнить сортировку");
         System.out.println("8. Подсчитать вхождения элемента (многопоточно)");
         System.out.println("9. Сохранить результат в файл (CSV/JSON/XML)");
-        System.out.println("10. Выход");
+        System.out.println("10. Демонстрация Stream API");
+        System.out.println("11. Выход");
         System.out.println();
     }
 
@@ -140,6 +141,7 @@ public final class MenuPrinter {
               clear             Сбросить настройки
               start [флаги]     Запустить сортировку
               save [флаги]      Сохранить результат в файл
+              stream            Запустить демонстрацию Stream API (Доп. задание)
             
             📌 ФЛАГИ:
               -c, --class    <1-5>   Класс (1-User, 2-Student, 3-Car, 4-Bus, 5-Barrel)

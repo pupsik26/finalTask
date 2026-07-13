@@ -20,7 +20,7 @@ public class Stream {
         System.out.println("\n" + "=".repeat(80));
         System.out.println("=".repeat(80));
 
-        String basePath = "src/main/dataSource/fileReader/examples/";
+        String basePath = "src/main/java/dataSource/fileReader/examples/";
 
 
         System.out.println("\n1. Студенты:");

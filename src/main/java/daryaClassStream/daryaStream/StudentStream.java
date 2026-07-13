@@ -37,7 +37,7 @@ public class StudentStream {
     private Student parseStudent(JsonNode node) {
         try {
             String groupNumber = node.get("groupNumber").asText().trim();
-            double gpa = node.get("gpa").asDouble();
+            double gpa = node.get("averageGrade").asDouble();
             String recordBookNumber = node.get("recordBookNumber").asText().trim();
 
             return Student.builder()

@@ -1,6 +1,6 @@
 package org.example.SortTest;
 
-import ModelBuilderClass.Bus;
+import daryaClassStream.ModelBuilderClass.Bus;
 import makarSorting.SortFacade;
 import org.junit.jupiter.api.Test;
 

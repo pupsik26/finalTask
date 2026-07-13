@@ -41,7 +41,7 @@ class MenuPrinterTest {
         assertTrue(output.contains("7. Выполнить"));
         assertTrue(output.contains("8. Подсчитать"));
         assertTrue(output.contains("9. Сохранить"));
-        assertTrue(output.contains("10. Выход"));
+        assertTrue(output.contains("11. Выход"));
     }
 
     @Test

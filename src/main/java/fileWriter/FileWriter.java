@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import fileWriter.classWriter.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
