@@ -11,7 +11,7 @@ public final class HeadersConst {
     public final static String CAR_MODEL = "model";
     public final static String CAR_YEAR = "year";
     public final static String STUDENT_GROUP = "groupNumber";
-    public final static String STUDENT_GPA = "gpa";
+    public final static String STUDENT_GPA = "averageGrade";
     public final static String STUDENT_NUMBER = "recordBookNumber";
     public final static String USER_NAME = "name";
     public final static String USER_PASSWORD = "password";

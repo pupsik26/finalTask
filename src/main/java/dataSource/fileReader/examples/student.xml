@@ -1,11 +1,11 @@
 <students>
     <student groupNumber="F"
-             gpa="4.6"
+             averageGrade="4.6"
              recordBookNumber="1127" />
     <student groupNumber="D"
-             gpa="5"
+             averageGrade="5"
              recordBookNumber="1128" />
     <student groupNumber="E"
-             gpa="4.8"
+             averageGrade="4.8"
              recordBookNumber="1129" />
 </students>

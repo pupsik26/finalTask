@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ivans.task.common.classes.Student;
+import ModelBuilderClass.Student;
 import ivans.task.exceptions.InvalidDataException;
 
 class StudentValidator implements TypeValidator<Student> {
@@ -12,7 +12,7 @@ class StudentValidator implements TypeValidator<Student> {
     public void validate(Student student) throws InvalidDataException {
         ValidationUtils.requireNonNull(student, "Student");
         validateGroupNumber(student.getGroupNumber());
-        validateGpa(student.getGpa());
+        validateGpa(student.getAverageGrade());
         validateRecordBookNumber(student.getRecordBookNumber());
     }
 

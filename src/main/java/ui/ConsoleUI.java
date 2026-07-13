@@ -107,10 +107,6 @@ public class ConsoleUI {
                 return handleStartCommand(command);
             }
 
-            if (command.getAction() == CommandAction.COUNT) {
-                return handleCountCommand(command);
-            }
-
             if (command.getAction() == CommandAction.SAVE) {
                 return handleSaveCommand(command);
             }
@@ -185,31 +181,6 @@ public class ConsoleUI {
         } catch (Exception e) {
             MenuPrinter.printError("Ошибка при сохранении файла: " + e.getMessage());
         }
-    }
-
-    private boolean handleCountCommand(Command command) {
-        command.getThreadCount().ifPresent(v -> {});
-        command.getSearchValue().ifPresent(v -> {});
-
-        if (currentData.isEmpty()) {
-            MenuPrinter.printError("Сначала загрузите данные (выберите класс, источник и размер)!");
-            return true;
-        }
-
-        String targetValue = command.getSearchValue().orElse(null);
-        int threads = command.getThreadCount().orElse(4);
-
-        if (targetValue == null) {
-            System.out.print("Введите строковое представление элемента для поиска (точно как в выводе, например: Car{power=150, model='Toyota Camry', year=2020}): ");
-            targetValue = scanner.nextLine().trim();
-        }
-
-        if (threads <= 0) {
-            threads = 4;
-        }
-
-        executeCount(targetValue, threads);
-        return true;
     }
 
     private void handleCountExecution() {
@@ -615,7 +586,7 @@ public class ConsoleUI {
     private String getFieldName(int classType, int fieldIndex) {
         String[] fields = switch (classType) {
             case 1 -> new String[]{"name", "password", "email"};
-            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
+            case 2 -> new String[]{"groupNumber", "averageGrade", "recordBookNumber"};
             case 3 -> new String[]{"power", "model", "year"};
             case 4 -> new String[]{"number", "model", "mileage"};
             case 5 -> new String[]{"volume", "storedMaterial", "material"};

@@ -102,20 +102,6 @@ class CommandParserTest {
         }
 
         @Test
-        @DisplayName("Парсит флаг -t (threads)")
-        void shouldParseThreadsFlag() throws CommandParser.CommandParseException {
-            Command cmd = CommandParser.parse("count -t 8 -v Car");
-            assertEquals(8, cmd.getThreadCount().orElse(0));
-        }
-
-        @Test
-        @DisplayName("Парсит флаг -v (value)")
-        void shouldParseValueFlag() throws CommandParser.CommandParseException {
-            Command cmd = CommandParser.parse("count -v SomeValue");
-            assertEquals("SomeValue", cmd.getSearchValue().orElse(""));
-        }
-
-        @Test
         @DisplayName("Частичные флаги — остальные параметры пусты")
         void shouldHandlePartialFlags() throws CommandParser.CommandParseException {
             Command cmd = CommandParser.parse("start -c 1 -s 2");
