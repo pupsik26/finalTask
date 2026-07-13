@@ -1,6 +1,7 @@
 package ivans.task.validators.objects;
 
 import daryaClassStream.ModelBuilderClass.Car;
+import ModelBuilderClass.Car;
 import ivans.task.exceptions.InvalidDataException;
 
 import java.time.Year;

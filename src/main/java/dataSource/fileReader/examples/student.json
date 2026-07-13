@@ -1,17 +1,17 @@
 [
   {
     "groupNumber": "A",
-    "gpa": 5,
+    "averageGrade": 5,
     "recordBookNumber": "34"
   },
   {
     "groupNumber": "C",
-    "gpa": 4.7,
+    "averageGrade": 4.7,
     "recordBookNumber": "33"
   },
   {
     "groupNumber": "B",
-    "gpa": 4.8,
+    "averageGrade": 4.8,
     "recordBookNumber": "32"
   }
 ]
