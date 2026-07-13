@@ -1,0 +1,22 @@
+[
+  {
+    "volume": 90,
+    "storedMaterial": "Water",
+    "material": "Steel"
+  },
+  {
+    "volume": 50,
+    "storedMaterial": "Water",
+    "material": "Steel"
+  },
+  {
+    "volume": 120,
+    "storedMaterial": "Water",
+    "material": "Steel"
+  },
+  {
+    "volume": 20,
+    "storedMaterial": "Water",
+    "material": "Steel"
+  }
+]
