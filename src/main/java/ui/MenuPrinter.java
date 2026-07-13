@@ -28,7 +28,8 @@ public final class MenuPrinter {
         System.out.println("6. Выбрать алгоритм сортировки" +
                 (algorithm != null ? " [" + algorithm.getDescription() + "]" : ""));
         System.out.println("7. Выполнить сортировку");
-        System.out.println("8. Выход");
+        System.out.println("8. Подсчитать вхождения элемента (многопоточно)"); // <-- НОВОЕ
+        System.out.println("9. Выход");
         System.out.println();
     }
 
@@ -137,6 +138,7 @@ public final class MenuPrinter {
               exit              Выйти из программы
               clear             Сбросить настройки
               start [флаги]     Запустить сортировку
+              count [флаги]     Подсчитать вхождения элемента (многопоточно)
             
             📌 ФЛАГИ:
               -c, --class    <1-5>   Класс (1-User, 2-Student, 3-Car, 4-Bus, 5-Barrel)
@@ -146,6 +148,8 @@ public final class MenuPrinter {
               -e, --even             Сортировка только чётных значений (доп. задание 1)
               -a, --algo     <1-3>   Алгоритм (1-Merge, 2-Quick, 3-Smart)
               -p, --path     <путь>  Путь к файлу (для source=3)
+              -t, --threads  <1-16>  Количество потоков для подсчета (для count)
+              -v, --value    <строка> Искомое значение (для count)
             
             📌 ТИПЫ СОРТИРОВКИ:
               Обычная — сортирует все объекты по выбранному полю
