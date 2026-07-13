@@ -18,7 +18,7 @@ public class StudentStream {
     }
 
     public void loadFromJson(String filePath) {
-        System.out.println("=== Загрузка студентов из JSON: " + filePath + " ===");
+        System.out.println("Загрузка студентов" + filePath);
 
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
@@ -30,7 +30,7 @@ public class StudentStream {
                     .forEach(System.out::println);
 
         } catch (IOException e) {
-            System.out.println("✗ Ошибка чтения файла: " + e.getMessage());
+            System.out.println("Ошибка чтения файла: " + e.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public class StudentStream {
                     .setRecordBookNumber(recordBookNumber)
                     .build();
         } catch (Exception e) {
-            System.out.println("✗ Ошибка парсинга студента: " + e.getMessage());
+            System.out.println("Ошибка парсинга студента: " + e.getMessage());
             return null;
         }
     }

@@ -19,7 +19,7 @@ public class UserStream {
     }
 
     public void loadValidFromJson(String filePath) {
-        System.out.println("=== Загрузка валидных пользователей ===");
+        System.out.println("Загрузка валидных пользователей");
 
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
@@ -39,7 +39,7 @@ public class UserStream {
             users.forEach(System.out::println);
 
         } catch (IOException e) {
-            System.out.println("✗ Ошибка: " + e.getMessage());
+            System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
@@ -55,7 +55,7 @@ public class UserStream {
                     .setEmail(email)
                     .build();
         } catch (Exception e) {
-            System.out.println("✗ Ошибка парсинга пользователя: " + e.getMessage());
+            System.out.println("Ошибка парсинга пользователя: " + e.getMessage());
             return null;
         }
     }

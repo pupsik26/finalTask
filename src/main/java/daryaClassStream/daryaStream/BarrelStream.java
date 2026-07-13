@@ -20,8 +20,6 @@ public class BarrelStream {
     }
 
     public void loadFromJsonWithStatistics(String filePath) {
-        System.out.println("=== Статистика бочек из JSON ===");
-
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
 
@@ -49,7 +47,7 @@ public class BarrelStream {
             System.out.println("Максимальная бочка: " + maxBarrel);
 
         } catch (IOException e) {
-            System.out.println("✗ Ошибка: " + e.getMessage());
+            System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
@@ -65,7 +63,7 @@ public class BarrelStream {
                     .setMaterial(material)
                     .build();
         } catch (Exception e) {
-            System.out.println("✗ Ошибка парсинга бочки: " + e.getMessage());
+            System.out.println("Ошибка парсинга бочки: " + e.getMessage());
             return null;
         }
     }
