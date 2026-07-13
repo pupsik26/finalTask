@@ -34,15 +34,15 @@ public class FileWriter {
     private static final String SEPARATOR = ";";
 
     public <T> void writeCsv(String filepath, List<T> array) throws IOException {
-        Writable<T> classWriter = (Writable<T>) classWriters.get(array.getFirst().getClass());
+        Writable<T> classWriter = (Writable<T>) classWriters.get(array.get(0).getClass());
         if (classWriter == null) {
-            throw new IOException("Тип данных не поддерживается: " + array.getFirst().getClass().getSimpleName());
+            throw new IOException("Тип данных не поддерживается: " + array.get(0).getClass().getSimpleName());
         }
 
         createPath(filepath);
 
         try (java.io.FileWriter fw = new java.io.FileWriter(filepath)) {
-            classWriter.setItem(array.getFirst());
+            classWriter.setItem(array.get(0));
             fw.write(classWriter.getCsvHeaders(SEPARATOR));
 
             for (T t : array) {
@@ -65,9 +65,9 @@ public class FileWriter {
     }
 
     public <T> void writeXml(String filepath, List<T> array) throws IOException {
-        Writable<T> classWriter = (Writable<T>) classWriters.get(array.getFirst().getClass());
+        Writable<T> classWriter = (Writable<T>) classWriters.get(array.get(0).getClass());
         if (classWriter == null) {
-            throw new IOException("Тип данных не поддерживается: " + array.getFirst().getClass().getSimpleName());
+            throw new IOException("Тип данных не поддерживается: " + array.get(0).getClass().getSimpleName());
         }
 
         createPath(filepath);
@@ -75,7 +75,7 @@ public class FileWriter {
         try {
             Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 
-            classWriter.setItem(array.getFirst());
+            classWriter.setItem(array.get(0));
             Element root = classWriter.getXmlRoot(dom);
             dom.appendChild(root);
 
