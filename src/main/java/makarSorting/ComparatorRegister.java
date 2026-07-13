@@ -1,6 +1,6 @@
 package makarSorting;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 
 import java.util.Comparator;
 import java.util.Map;
