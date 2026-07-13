@@ -115,10 +115,11 @@ class ConsoleUITest {
     }
 
     @Test
-    @DisplayName("Попытка подсчёта без загруженных данных выдаёт ошибку")
+    @DisplayName("Попытка подсчёта (пункт 8) без загруженных данных выдаёт ошибку")
     void shouldFailToCountWithoutData() {
-        createUI("count\nexit\n").run();
+        createUI("8\n10\n").run();
         String output = outContent.toString();
+
         assertTrue(output.contains("Нет данных") || output.contains("загрузите"));
     }
 
