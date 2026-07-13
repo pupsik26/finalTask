@@ -1,6 +1,6 @@
 package dataSource.fileReader;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;

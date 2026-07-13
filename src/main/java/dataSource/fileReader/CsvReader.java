@@ -1,6 +1,6 @@
 package dataSource.fileReader;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import ivans.task.validators.file.input.FileLineValidator;
 import ivans.task.validators.objects.ObjectValidatorFactory;
 

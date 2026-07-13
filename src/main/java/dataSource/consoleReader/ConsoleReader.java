@@ -1,6 +1,6 @@
 package dataSource.consoleReader;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import ivans.task.exceptions.InvalidInputException;
 import ivans.task.validators.manual.input.ManualInputValidator;
 

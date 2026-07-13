@@ -1,6 +1,6 @@
 package ui;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import dataSource.consoleReader.ConsoleReader;
 import dataSource.fileReader.FileReader;
 import dataSource.randomData.Generator;
