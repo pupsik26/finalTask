@@ -19,7 +19,7 @@ public class BusStream {
     }
 
     public void loadFromJsonGroupedByModel(String filePath) {
-        System.out.println("=== Загрузка автобусов с группировкой по модели ===");
+        System.out.println("Загрузка автобусов с группировкой по модели");
 
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
@@ -31,10 +31,10 @@ public class BusStream {
                     .collect(Collectors.groupingBy(Bus::getModel));
 
             busesByModel.forEach((model, list) ->
-                    System.out.println("  Модель " + model + ": " + list.size() + " шт."));
+                    System.out.println("Модель " + model + ": " + list.size() + " шт."));
 
         } catch (IOException e) {
-            System.out.println("✗ Ошибка: " + e.getMessage());
+            System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class BusStream {
                     .setMileage(mileage)
                     .build();
         } catch (Exception e) {
-            System.out.println("✗ Ошибка парсинга автобуса: " + e.getMessage());
+            System.out.println("Ошибка парсинга автобуса: " + e.getMessage());
             return null;
         }
     }

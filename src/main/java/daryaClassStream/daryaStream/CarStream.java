@@ -20,7 +20,7 @@ public class CarStream {
     }
 
     public void loadFromJsonWithFilter(String filePath, int minPower) {
-        System.out.println("=== Загрузка автомобилей (мощность >= " + minPower + ") ===");
+        System.out.println("Загрузка автомобилей (мощность >= " + minPower + ")");
 
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
@@ -36,7 +36,7 @@ public class CarStream {
             cars.forEach(System.out::println);
 
         } catch (IOException e) {
-            System.out.println("✗ Ошибка: " + e.getMessage());
+            System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
@@ -52,7 +52,7 @@ public class CarStream {
                     .setYear(year)
                     .build();
         } catch (Exception e) {
-            System.out.println("✗ Ошибка парсинга автомобиля: " + e.getMessage());
+            System.out.println("Ошибка парсинга автомобиля: " + e.getMessage());
             return null;
         }
     }

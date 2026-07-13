@@ -18,25 +18,24 @@ public class Stream {
 
     public void demonstrateAllProcessors() {
         System.out.println("\n" + "=".repeat(80));
-        System.out.println("ДЕМОНСТРАЦИЯ 5 КЛАССОВ ДЛЯ ОБРАБОТКИ JSON ЧЕРЕЗ СТРИМЫ");
         System.out.println("=".repeat(80));
 
         String basePath = "src/main/dataSource/fileReader/examples/";
 
 
-        System.out.println("\n1. СТУДЕНТЫ:");
+        System.out.println("\n1. Студенты:");
         studentStream.loadFromJson(basePath + "student.json");
 
-        System.out.println("\n2. АВТОМОБИЛИ (мощность >= 350):");
+        System.out.println("\n2. Автомобили");
         carStream.loadFromJsonWithFilter(basePath + "car.json", 350);
 
-        System.out.println("\n3. АВТОБУСЫ (по моделям):");
+        System.out.println("\n3. Автобусы");
         busStream.loadFromJsonGroupedByModel(basePath + "bus.json");
 
-        System.out.println("\n4. БОЧКИ:");
+        System.out.println("\n4. Бочки");
         barrelStream.loadFromJsonWithStatistics(basePath + "barrel.json");
 
-        System.out.println("\n5. ПОЛЬЗОВАТЕЛИ:");
+        System.out.println("\n5. Пользователи");
         userStream.loadValidFromJson(basePath + "user.json");
 
         System.out.println("=".repeat(80));
