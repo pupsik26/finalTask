@@ -28,8 +28,12 @@ public class Bus {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Bus bus = (Bus) o;
         return mileage == bus.mileage &&
                 Objects.equals(number, bus.number) &&
