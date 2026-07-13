@@ -1,0 +1,17 @@
+[
+  {
+    "number": 10,
+    "model": "D",
+    "mileage": 9000
+  },
+  {
+    "number": 20,
+    "model": "E",
+    "mileage": 5000
+  },
+  {
+    "number": 15,
+    "model": "F",
+    "mileage": 2000
+  }
+]

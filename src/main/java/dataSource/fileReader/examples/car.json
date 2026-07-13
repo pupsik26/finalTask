@@ -1,0 +1,17 @@
+[
+  {
+    "power": 300,
+    "model": "ABCD",
+    "year": 1995
+  },
+  {
+    "power": 400,
+    "model": "ABDC",
+    "year": 1994
+  },
+  {
+    "power": 350,
+    "model": "AAA",
+    "year": 1993
+  }
+]

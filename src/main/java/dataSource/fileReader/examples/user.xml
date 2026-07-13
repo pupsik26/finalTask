@@ -1,0 +1,11 @@
+<users>
+    <user name="Andrew"
+          password="1234567890"
+          email="Andrew@example.com" />
+    <user name="Olga"
+          password="Qwerty"
+          email="Olga@example.com" />
+    <user name="Igor"
+          password="Asdfghjkl"
+          email="Igor@example.com" />
+</users>
