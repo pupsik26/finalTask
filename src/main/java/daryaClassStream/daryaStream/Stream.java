@@ -16,7 +16,7 @@ public class Stream {
         this.userStream = new UserStream();
     }
 
-    public void demonstrateAllProcessors() {
+    /*public void demonstrateAllProcessors() {
         System.out.println("\n" + "=".repeat(80));
         System.out.println("=".repeat(80));
 
@@ -39,5 +39,5 @@ public class Stream {
         userStream.loadValidFromJson(basePath + "user.json");
 
         System.out.println("=".repeat(80));
-    }
+    }*/
 }
