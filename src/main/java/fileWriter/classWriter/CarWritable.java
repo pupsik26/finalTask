@@ -1,6 +1,6 @@
 package fileWriter.classWriter;
 
-import ModelBuilderClass.Car;
+import daryaClassStream.ModelBuilderClass.Car;
 import dataSource.fileReader.HeadersConst;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

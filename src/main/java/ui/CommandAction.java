@@ -9,6 +9,7 @@ public enum CommandAction {
     START("start", "Запустить сортировку"),
     COUNT("count", "Подсчитать вхождения элемента"),
     SAVE("save", "Сохранить результат в файл"),
+    STREAM_DEMO("stream", "Демонстрация Stream API"),
     EXIT("exit", "Выйти из программы"),
     CLEAR("clear", "Сбросить настройки"),
     UNKNOWN("", "Неизвестная команда");

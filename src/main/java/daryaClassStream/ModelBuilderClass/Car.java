@@ -1,4 +1,4 @@
-package ModelBuilderClass;
+package daryaClassStream.ModelBuilderClass;
 
 import java.util.Objects;
 

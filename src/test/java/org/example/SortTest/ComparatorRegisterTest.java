@@ -1,4 +1,5 @@
 package org.example.SortTest;
+import daryaClassStream.ModelBuilderClass.User;
 import makarSorting.ComparatorRegister;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,6 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ModelBuilderClass.User;
 
 public class ComparatorRegisterTest {
 

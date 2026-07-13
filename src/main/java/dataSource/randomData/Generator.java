@@ -1,6 +1,6 @@
 package dataSource.randomData;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 
 import java.util.LinkedList;
 import java.util.List;

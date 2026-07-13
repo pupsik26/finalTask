@@ -1,7 +1,7 @@
 package fileWriter.classWriter;
 
+import daryaClassStream.ModelBuilderClass.Barrel;
 import dataSource.fileReader.HeadersConst;
-import ModelBuilderClass.Barrel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

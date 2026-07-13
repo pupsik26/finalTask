@@ -2,7 +2,7 @@ package dataSource.fileReader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import ivans.task.validators.objects.ObjectValidatorFactory;
 
 import java.io.File;
