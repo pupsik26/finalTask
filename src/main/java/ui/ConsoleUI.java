@@ -4,14 +4,14 @@ import ModelBuilderClass.*;
 import dataSource.consoleReader.ConsoleReader;
 import dataSource.fileReader.FileReader;
 import dataSource.randomData.Generator;
+import fileWriter.FileWriter;
 import makarSorting.EvenFieldSorter;
 import makarSorting.SortFacade;
 import makarSorting.Strategy.MergeSortStrategy;
 import makarSorting.Strategy.QuickSortStrategy;
 import makarSorting.Strategy.SmartSorter;
 import makarSorting.Strategy.SortStrategy;
-import ui.service.*;
-import fileWriter.FileWriter;
+import ui.service.ElementCounter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,7 +67,9 @@ public class ConsoleUI {
             System.out.print("\n> ");
             String rawInput = scanner.nextLine().trim();
 
-            if (rawInput.isEmpty()) continue;
+            if (rawInput.isEmpty()) {
+                continue;
+            }
 
             if (isCommandMode(rawInput)) {
                 isRunning = handleCommand(rawInput);
@@ -202,7 +204,9 @@ public class ConsoleUI {
             targetValue = scanner.nextLine().trim();
         }
 
-        if (threads <= 0) threads = 4;
+        if (threads <= 0) {
+            threads = 4;
+        }
 
         executeCount(targetValue, threads);
         return true;
@@ -224,7 +228,9 @@ public class ConsoleUI {
         if (!threadsInput.isEmpty()) {
             try {
                 threads = Integer.parseInt(threadsInput);
-                if (threads < 1 || threads > 16) threads = 4;
+                if (threads < 1 || threads > 16) {
+                    threads = 4;
+                }
             } catch (NumberFormatException e) {
                 threads = 4;
             }
@@ -371,7 +377,9 @@ public class ConsoleUI {
     }
 
     private void handleSortExecution() {
-        if (!validateParametersInteractive()) return;
+        if (!validateParametersInteractive()) {
+            return;
+        }
         executeSort();
     }
 
@@ -563,7 +571,9 @@ public class ConsoleUI {
             System.out.print(prompt);
             try {
                 int value = Integer.parseInt(scanner.nextLine().trim());
-                if (value >= min && value <= max) return value;
+                if (value >= min && value <= max) {
+                    return value;
+                }
                 System.out.println("Значение должно быть от " + min + " до " + max);
             } catch (NumberFormatException e) {
                 System.out.println("Введите корректное число");
