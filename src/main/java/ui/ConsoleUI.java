@@ -12,6 +12,7 @@ import makarSorting.Strategy.QuickSortStrategy;
 import makarSorting.Strategy.SmartSorter;
 import makarSorting.Strategy.SortStrategy;
 import ui.service.ElementCounter;
+import daryaClassStream.daryaStream.Stream;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -108,6 +109,11 @@ public class ConsoleUI {
 
             if (command.getAction() == CommandAction.SAVE) {
                 return handleSaveCommand(command);
+            }
+
+            if (command.getAction() == CommandAction.STREAM_DEMO) {
+                handleStreamDemo();
+                return true;
             }
 
             if (command.isUnknown()) {
@@ -271,7 +277,8 @@ public class ConsoleUI {
                 case 7 -> { handleSortExecution(); yield true; }
                 case 8 -> { handleCountExecution(); yield true; }
                 case 9 -> { handleSaveExecution(); yield true; }
-                case 10 -> { System.out.println("\nДо свидания!"); yield false; }
+                case 10 -> { handleStreamDemo(); yield true; }
+                case 11 -> { System.out.println("\nДо свидания!"); yield false; }
                 default -> {
                     MenuPrinter.printError("Выберите пункт от 1 до 9");
                     yield true;
@@ -280,6 +287,31 @@ public class ConsoleUI {
         } catch (NumberFormatException e) {
             MenuPrinter.printError("Неверный ввод. Введите цифру или команду");
             return true;
+        }
+    }
+
+    /**
+     * Запускает демонстрацию возможностей Stream API (Дополнительное задание).
+     */
+    private void handleStreamDemo() {
+        System.out.println("\n🚀 Запуск демонстрации Stream API...");
+        System.out.println("⚠️ ВНИМАНИЕ: Для работы требуются файлы:");
+        System.out.println("   - student.json");
+        System.out.println("   - car.json");
+        System.out.println("   - bus.json");
+        System.out.println("   - barrel.json");
+        System.out.println("   - user.json");
+        System.out.println("   Расположенные в: src/main/dataSource/fileReader/examples/\n");
+
+        try {
+            // Создаем экземпляр класса из пакета Дарьи и запускаем демонстрацию
+            Stream streamDemo = new Stream();
+            streamDemo.demonstrateAllProcessors();
+
+            MenuPrinter.printSuccess("Демонстрация Stream API успешно завершена!");
+        } catch (Exception e) {
+            MenuPrinter.printError("Критическая ошибка при выполнении демонстрации: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

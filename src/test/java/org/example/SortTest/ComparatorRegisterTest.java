@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ModelBuilderClass.User;
 
 public class ComparatorRegisterTest {
 
