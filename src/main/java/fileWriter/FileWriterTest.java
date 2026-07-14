@@ -1,6 +1,7 @@
 package fileWriter;
 
-import ModelBuilderClass.*;
+
+import daryaClassStream.ModelBuilderClass.Barrel;
 
 import java.io.IOException;
 import java.util.ArrayList;

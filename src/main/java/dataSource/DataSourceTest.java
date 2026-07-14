@@ -1,7 +1,6 @@
 package dataSource;
 
-import ModelBuilderClass.*;
-import dataSource.fileReader.CsvReader;
+import daryaClassStream.ModelBuilderClass.*;
 import dataSource.fileReader.FileReader;
 import dataSource.randomData.Generator;
 
