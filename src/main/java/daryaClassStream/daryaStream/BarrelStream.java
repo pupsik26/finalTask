@@ -1,70 +1,98 @@
 package daryaClassStream.daryaStream;
 
-import daryaClassStream.ModelBuilderClass.Barrel;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class BarrelStream {
+    private final double volume;
+    private final String storedMaterial;
+    private final String material;
 
-    private final ObjectMapper mapper;
-
-    public BarrelStream() {
-        this.mapper = new ObjectMapper();
+    private BarrelStream(Builder builder) {
+        this.volume = builder.volume;
+        this.storedMaterial = builder.storedMaterial;
+        this.material = builder.material;
     }
 
-    public void loadFromJsonWithStatistics(String filePath) {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public double getVolume() { return volume; }
+    public String getStoredMaterial() { return storedMaterial; }
+    public String getMaterial() { return material; }
+
+    @Override
+    public String toString() {
+        return "Barrel{volume=" + volume + ", stores='" + storedMaterial +
+                "', madeOf='" + material + "'}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        BarrelStream barrel = (BarrelStream) o;
+        return Double.compare(barrel.volume, volume) == 0 &&
+                Objects.equals(storedMaterial, barrel.storedMaterial) &&
+                Objects.equals(material, barrel.material);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(volume, storedMaterial, material);
+    }
+
+    public static List<BarrelStream> loadFromJson(String filePath) {
+        ObjectMapper mapper = new ObjectMapper();
+
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
 
-            var barrels = StreamSupport.stream(rootNode.spliterator(), false)
+            return StreamSupport.stream(rootNode.spliterator(), false)
                     .filter(JsonNode::isObject)
-                    .map(this::parseBarrel)
-                    .filter(Objects::nonNull)
+                    .map(node -> BarrelStream.builder()
+                            .setVolume(node.get("volume").asDouble())
+                            .setStoredMaterial(node.get("storedMaterial").asText().trim())
+                            .setMaterial(node.get("material").asText().trim())
+                            .build())
                     .collect(Collectors.toList());
 
-            long totalCount = barrels.stream().count();
-            double totalVolume = barrels.stream()
-                    .mapToDouble(Barrel::getVolume)
-                    .sum();
-            double avgVolume = barrels.stream()
-                    .mapToDouble(Barrel::getVolume)
-                    .average()
-                    .orElse(0.0);
-            Barrel maxBarrel = barrels.stream()
-                    .max(Comparator.comparing(Barrel::getVolume))
-                    .orElse(null);
-
-            System.out.println("Всего бочек: " + totalCount);
-            System.out.println("Общий объём: " + totalVolume + " л");
-            System.out.println("Средний объём: " + String.format("%.2f", avgVolume) + " л");
-            System.out.println("Максимальная бочка: " + maxBarrel);
-
         } catch (IOException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println("Ошибка чтения файла: " + e.getMessage());
+            return List.of();
         }
     }
 
-    private Barrel parseBarrel(JsonNode node) {
-        try {
-            double volume = node.get("volume").asDouble();
-            String storedMaterial = node.get("storedMaterial").asText().trim();
-            String material = node.get("material").asText().trim();
+    public static class Builder {
+        private double volume;
+        private String storedMaterial;
+        private String material;
 
-            return Barrel.builder()
-                    .setVolume(volume)
-                    .setStoredMaterial(storedMaterial)
-                    .setMaterial(material)
-                    .build();
-        } catch (Exception e) {
-            System.out.println("Ошибка парсинга бочки: " + e.getMessage());
-            return null;
+        public Builder setVolume(double volume) {
+            this.volume = volume;
+            return this;
+        }
+
+        public Builder setStoredMaterial(String storedMaterial) {
+            this.storedMaterial = storedMaterial;
+            return this;
+        }
+
+        public Builder setMaterial(String material) {
+            this.material = material;
+            return this;
+        }
+
+        public BarrelStream build() {
+            return new BarrelStream(this);
         }
     }
 }

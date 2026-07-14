@@ -1,68 +1,101 @@
 package daryaClassStream.daryaStream;
 
-import daryaClassStream.ModelBuilderClass.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class UserStream {
+    private final String name;
+    private final String password;
+    private final String email;
 
-    private final ObjectMapper mapper;
-
-    public UserStream() {
-        this.mapper = new ObjectMapper();
+    private UserStream(Builder builder) {
+        this.name = builder.name;
+        this.password = builder.password;
+        this.email = builder.email;
     }
 
-    public void loadValidFromJson(String filePath) {
-        System.out.println("Загрузка валидных пользователей");
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public String getName() { return name; }
+    public String getPassword() { return password; }
+    public String getEmail() { return email; }
+
+    @Override
+    public String toString() {
+        return "User{name='" + name + "', email='" + email + "'}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserStream user = (UserStream) o;
+        return Objects.equals(name, user.name) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, password, email);
+    }
+
+    public static List<UserStream> loadFromJson(String filePath) {
+        ObjectMapper mapper = new ObjectMapper();
 
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
 
-            var users = StreamSupport.stream(rootNode.spliterator(), false)
+            return StreamSupport.stream(rootNode.spliterator(), false)
                     .filter(JsonNode::isObject)
-                    .map(this::parseUser)
-                    .filter(Objects::nonNull)
-                    .filter(this::isValidUser)
-                    .map(user -> User.builder()
-                            .setName(user.getName().trim().toUpperCase())
-                            .setPassword(user.getPassword())
-                            .setEmail(user.getEmail().trim())
+                    .map(node -> UserStream.builder()
+                            .setName(node.get("name ").asText().trim())
+                            .setPassword(node.get("password ").asText().trim())
+                            .setEmail(node.get("email ").asText().trim())
                             .build())
                     .collect(Collectors.toList());
 
-            users.forEach(System.out::println);
-
         } catch (IOException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println("Ошибка чтения файла: " + e.getMessage());
+            return List.of();
         }
     }
 
-    private User parseUser(JsonNode node) {
-        try {
-            String name = node.get("name").asText().trim();
-            String password = node.get("password").asText().trim();
-            String email = node.get("email").asText().trim();
+    public static class Builder {
+        private String name;
+        private String password;
+        private String email;
 
-            return User.builder()
-                    .setName(name)
-                    .setPassword(password)
-                    .setEmail(email)
-                    .build();
-        } catch (Exception e) {
-            System.out.println("Ошибка парсинга пользователя: " + e.getMessage());
-            return null;
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
         }
-    }
 
-    private boolean isValidUser(User user) {
-        return user.getName() != null && !user.getName().isEmpty() &&
-                user.getPassword() != null && user.getPassword().length() >= 4 &&
-                user.getEmail() != null && user.getEmail().contains("@");
+        public Builder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public UserStream build() {
+            return new UserStream(this);
+        }
     }
 }

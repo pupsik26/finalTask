@@ -1,57 +1,97 @@
 package daryaClassStream.daryaStream;
 
-import daryaClassStream.ModelBuilderClass.Bus;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class BusStream {
+    private final String number;
+    private final String model;
+    private final int mileage;
 
-    private final ObjectMapper mapper;
-
-    public BusStream() {
-        this.mapper = new ObjectMapper();
+    private BusStream(Builder builder) {
+        this.number = builder.number;
+        this.model = builder.model;
+        this.mileage = builder.mileage;
     }
 
-    public void loadFromJsonGroupedByModel(String filePath) {
-        System.out.println("Загрузка автобусов с группировкой по модели");
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public String getNumber() { return number; }
+    public String getModel() { return model; }
+    public int getMileage() { return mileage; }
+
+    @Override
+    public String toString() {
+        return "Bus{number='" + number + "', model='" + model + "', mileage=" + mileage + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        BusStream bus = (BusStream) o;
+        return mileage == bus.mileage &&
+                Objects.equals(number, bus.number) &&
+                Objects.equals(model, bus.model);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, model, mileage);
+    }
+
+    public static List<BusStream> loadFromJson(String filePath) {
+        ObjectMapper mapper = new ObjectMapper();
 
         try {
             JsonNode rootNode = mapper.readTree(new File(filePath));
 
-            var busesByModel = StreamSupport.stream(rootNode.spliterator(), false)
+            return StreamSupport.stream(rootNode.spliterator(), false)
                     .filter(JsonNode::isObject)
-                    .map(this::parseBus)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.groupingBy(Bus::getModel));
-
-            busesByModel.forEach((model, list) ->
-                    System.out.println("Модель " + model + ": " + list.size() + " шт."));
+                    .map(node -> BusStream.builder()
+                            .setNumber(String.valueOf(node.get("number ").asInt()))
+                            .setModel(node.get("model ").asText().trim())
+                            .setMileage(node.get("mileage ").asInt())
+                            .build())
+                    .collect(Collectors.toList());
 
         } catch (IOException e) {
-            System.out.println("Ошибка: " + e.getMessage());
+            System.out.println("Ошибка чтения файла: " + e.getMessage());
+            return List.of();
         }
     }
 
-    private Bus parseBus(JsonNode node) {
-        try {
-            int number = node.get("number").asInt();
-            String model = node.get("model").asText().trim();
-            int mileage = node.get("mileage").asInt();
+    public static class Builder {
+        private String number;
+        private String model;
+        private int mileage;
 
-            return Bus.builder()
-                    .setNumber("BUS-" + number)
-                    .setModel(model)
-                    .setMileage(mileage)
-                    .build();
-        } catch (Exception e) {
-            System.out.println("Ошибка парсинга автобуса: " + e.getMessage());
-            return null;
+        public Builder setNumber(String number) {
+            this.number = number;
+            return this;
+        }
+
+        public Builder setModel(String model) {
+            this.model = model;
+            return this;
+        }
+
+        public Builder setMileage(int mileage) {
+            this.mileage = mileage;
+            return this;
+        }
+
+        public BusStream build() {
+            return new BusStream(this);
         }
     }
 }
