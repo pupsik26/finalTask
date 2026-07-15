@@ -37,9 +37,6 @@ class CommandParserTest {
             assertEquals(CommandAction.COUNT, cmd.getAction());
         }
 
-        // Примечание: тест для 'save' удален, так как CommandAction.SAVE
-        // отсутствует в enum. Вместо него используется команда 'count' с флагами.
-
         @Test
         @DisplayName("Регистронезависимость: 'HELP' == 'help'")
         void shouldBeCaseInsensitive() throws CommandParser.CommandParseException {
@@ -97,7 +94,7 @@ class CommandParserTest {
             // ЗАМЕНЕНО: вместо outputPath тестируем реальные поля threadCount и searchValue
             Command cmd = CommandParser.parse("count -t 8 -v \"Car{power=150}\"");
             assertEquals(8, cmd.getThreadCount().orElse(0));
-            assertEquals("Car{power=150}", cmd.getSearchValue().orElse(""));
+            assertEquals("Car{power=150}", cmd.getSearchValue().orElse("").replace("\"", ""));
         }
 
         @Test

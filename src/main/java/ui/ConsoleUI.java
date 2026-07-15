@@ -90,7 +90,7 @@ public class ConsoleUI {
             }
 
             if (command.isExit()) {
-                System.out.println("\nДо свидания!");
+                System.out.println("\n До свидания!");
                 return false;
             }
 
@@ -298,7 +298,7 @@ public class ConsoleUI {
                 case 8 -> { handleCountExecution(); yield true; }
                 case 9 -> { handleSaveExecution(); yield true; }
                 case 10 -> { handleStreamDemo(); yield true; }
-                case 11 -> { System.out.println("\nДо свидания!"); yield false; }
+                case 11 -> { System.out.println("\n До свидания!"); yield false; }
                 default -> {
                     MenuPrinter.printError("Выберите пункт от 1 до 11");
                     yield true;

@@ -50,7 +50,7 @@ public class ComparatorRegisterTest {
                 .setPassword("456")
                 .setEmail("i@mail.com")
                 .build();
-        
+
         assertTrue(comparator.compare(alex, ivan) < 0);
     }
 }
