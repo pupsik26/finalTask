@@ -21,15 +21,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Консольный интерфейс пользователя.
- */
 public class ConsoleUI {
 
     private final Scanner scanner;
     private final SortFacade sortFacade;
     private final EvenFieldSorter evenFieldSorter;
     private final ElementCounter elementCounter;
+    private final FileWriter fileWriter;
 
     private int selectedClassType;
     private int selectedDataSourceType;
@@ -45,15 +43,14 @@ public class ConsoleUI {
         this.sortFacade = new SortFacade();
         this.evenFieldSorter = new EvenFieldSorter();
         this.elementCounter = new ElementCounter();
+        this.fileWriter = new FileWriter(); // Теперь это поле инициализируется корректно
         this.currentData = new ArrayList<>();
-        this.fileWriter = new FileWriter();
         this.selectedSortType = SortType.NORMAL;
         this.selectedAlgorithm = SortAlgorithm.SMART;
     }
 
     public void run() {
         printWelcomeMessage();
-
         boolean isRunning = true;
 
         while (isRunning) {
@@ -111,7 +108,11 @@ public class ConsoleUI {
                 return handleSaveCommand(command);
             }
 
-            if (command.getAction() == CommandAction.STREAM_DEMO) {
+            if (command.getAction() == CommandAction.COUNT) {
+                return handleCountCommand(command);
+            }
+
+            if (command.getAction() == CommandAction.STREAM_DEMO) { // Убедитесь, что STREAM_DEMO есть в enum CommandAction
                 handleStreamDemo();
                 return true;
             }
@@ -131,7 +132,7 @@ public class ConsoleUI {
         }
     }
 
-    private boolean handleCountCommand(Command command) {
+    private boolean handleSaveCommand(Command command) {
         if (currentData.isEmpty()) {
             MenuPrinter.printError("Нет данных для сохранения. Сначала загрузите данные.");
             return true;
@@ -144,6 +145,26 @@ public class ConsoleUI {
         }
 
         executeSave(path);
+        return true;
+    }
+
+    private boolean handleCountCommand(Command command) {
+        if (currentData.isEmpty()) {
+            MenuPrinter.printError("Сначала загрузите данные (выберите класс, источник и размер)!");
+            return true;
+        }
+
+        String targetValue = command.getSearchValue().orElse(null);
+        int threads = command.getThreadCount().orElse(4);
+
+        if (targetValue == null || targetValue.isBlank()) {
+            System.out.print("Введите строковое представление элемента для поиска: ");
+            targetValue = scanner.nextLine().trim();
+        }
+
+        if (threads <= 0) threads = 4;
+
+        executeCount(targetValue, threads);
         return true;
     }
 
@@ -194,7 +215,7 @@ public class ConsoleUI {
             return;
         }
 
-        System.out.println("\n💡 Подсказка: скопируйте строку элемента из результата сортировки выше.");
+        System.out.println("\n Подсказка: скопируйте строку элемента из результата сортировки выше.");
         System.out.print("Введите строковое представление элемента для поиска: ");
         String targetValue = scanner.nextLine().trim();
 
@@ -224,10 +245,9 @@ public class ConsoleUI {
         MenuPrinter.printInfo("Запуск многопоточного подсчета (" + threads + " поток(ов))...");
 
         long startTime = System.nanoTime();
-
         long count = elementCounter.countOccurrences(currentData, targetValue, threads);
-
         long endTime = System.nanoTime();
+
         double elapsedMs = (endTime - startTime) / 1_000_000.0;
 
         System.out.println("\n╔════════════════════════════════════════╗");
@@ -280,7 +300,7 @@ public class ConsoleUI {
                 case 10 -> { handleStreamDemo(); yield true; }
                 case 11 -> { System.out.println("\nДо свидания!"); yield false; }
                 default -> {
-                    MenuPrinter.printError("Выберите пункт от 1 до 9");
+                    MenuPrinter.printError("Выберите пункт от 1 до 11");
                     yield true;
                 }
             };
@@ -290,24 +310,15 @@ public class ConsoleUI {
         }
     }
 
-    /**
-     * Запускает демонстрацию возможностей Stream API (Дополнительное задание).
-     */
     private void handleStreamDemo() {
-        System.out.println("\n🚀 Запуск демонстрации Stream API...");
-        System.out.println("⚠️ ВНИМАНИЕ: Для работы требуются файлы:");
-        System.out.println("   - student.json");
-        System.out.println("   - car.json");
-        System.out.println("   - bus.json");
-        System.out.println("   - barrel.json");
-        System.out.println("   - user.json");
+        System.out.println("\n Запуск демонстрации Stream API...");
+        System.out.println("ВНИМАНИЕ: Для работы требуются файлы:");
+        System.out.println("   - student.json, car.json, bus.json, barrel.json, user.json");
         System.out.println("   Расположенные в: src/main/dataSource/fileReader/examples/\n");
 
         try {
-            // Создаем экземпляр класса из пакета Дарьи и запускаем демонстрацию
             Stream streamDemo = new Stream();
             streamDemo.demonstrateAllProcessors();
-
             MenuPrinter.printSuccess("Демонстрация Stream API успешно завершена!");
         } catch (Exception e) {
             MenuPrinter.printError("Критическая ошибка при выполнении демонстрации: " + e.getMessage());
@@ -401,7 +412,6 @@ public class ConsoleUI {
             Class<?> modelClass = getModelClass(selectedClassType);
 
             MenuPrinter.printInfo("Начинаем сортировку...");
-
             long startTime = System.nanoTime();
 
             if (selectedSortType == SortType.EVEN) {
@@ -418,7 +428,6 @@ public class ConsoleUI {
             }
 
             long endTime = System.nanoTime();
-
             MenuPrinter.printSortResults(currentData, fieldName, selectedSortType,
                     selectedAlgorithm, endTime - startTime);
 
@@ -430,15 +439,14 @@ public class ConsoleUI {
 
     private SortStrategy<Object> createStrategy(SortAlgorithm algorithm) {
         return switch (algorithm) {
-            case MERGE -> new MergeSortStrategy<Object>();
-            case QUICK -> new QuickSortStrategy<Object>();
-            case SMART -> new SmartSorter<Object>();
+            case MERGE -> new MergeSortStrategy<>();
+            case QUICK -> new QuickSortStrategy<>();
+            case SMART -> new SmartSorter<>();
         };
     }
 
     private void loadData() {
         MenuPrinter.printInfo("Загрузка данных...");
-
         try {
             currentData = switch (selectedDataSourceType) {
                 case 1 -> loadManualData();
@@ -446,9 +454,7 @@ public class ConsoleUI {
                 case 3 -> loadFileData();
                 default -> throw new IllegalStateException("Неизвестный источник: " + selectedDataSourceType);
             };
-
             MenuPrinter.printSuccess("Загружено " + currentData.size() + " объектов");
-
         } catch (Exception e) {
             MenuPrinter.printError("Ошибка при загрузке данных: " + e.getMessage());
             currentData.clear();
@@ -457,7 +463,6 @@ public class ConsoleUI {
 
     private List<Object> loadManualData() {
         ConsoleReader consoleReader = new ConsoleReader();
-
         return switch (selectedClassType) {
             case 1 -> new ArrayList<>(consoleReader.readUser(
                     "Введите количество пользователей: ",
@@ -495,7 +500,6 @@ public class ConsoleUI {
 
     private List<Object> loadRandomData() {
         Generator generator = new Generator();
-
         return switch (selectedClassType) {
             case 1 -> new ArrayList<>(generator.readUsers(collectionSize));
             case 2 -> new ArrayList<>(generator.readStudents(collectionSize));
@@ -614,7 +618,7 @@ public class ConsoleUI {
     private String getFieldName(int classType, int fieldIndex) {
         String[] fields = switch (classType) {
             case 1 -> new String[]{"name", "password", "email"};
-            case 2 -> new String[]{"groupNumber", "averageGrade", "recordBookNumber"};
+            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
             case 3 -> new String[]{"power", "model", "year"};
             case 4 -> new String[]{"number", "model", "mileage"};
             case 5 -> new String[]{"volume", "storedMaterial", "material"};

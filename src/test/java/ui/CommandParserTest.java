@@ -164,3 +164,4 @@ class CommandParserTest {
                     () -> CommandParser.parse("start -c 1 extra"));
         }
     }
+}
