@@ -1,6 +1,6 @@
 package ivans.task.validators.objects;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import ivans.task.exceptions.InvalidDataException;
 
 import java.util.HashMap;

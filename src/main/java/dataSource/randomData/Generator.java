@@ -1,6 +1,6 @@
 package dataSource.randomData;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,8 +8,13 @@ import java.util.Random;
 
 public class Generator {
 
-    // Один Random на весь класс (лучше для производительности и качества)
-    private final Random random = new Random();
+    private final Random random;
+    public Generator() {
+        this.random = new Random();
+    }
+    public Generator(long seed) {
+        this.random = new Random(seed);
+    }
 
     private final static double BARREL_VOLUME_MIN = 10;
     private final static double BARREL_VOLUME_MAX = 100;
@@ -24,8 +29,8 @@ public class Generator {
 
     private final static int BUS_NUMBER_MIN = 1;
     private final static int BUS_NUMBER_MAX = 50;
-    private final static double BUS_MILEAGE_MIN = 1000;
-    private final static double BUS_MILEAGE_MAX = 100000;
+    private final static int BUS_MILEAGE_MIN = 1000;
+    private final static int BUS_MILEAGE_MAX = 100000;
     private final static String[] BUS_MODEL = {
             "ЛиАЗ‑5292", "ПАЗ‑3205", "НефАЗ‑5299", "МАЗ‑203", "Volgabus‑5270",
             "КАвЗ‑4238", "Mercedes‑Benz Citaro", "Scania Citywide",
@@ -55,21 +60,12 @@ public class Generator {
             "Alexander", "Mary", "Dmitry", "Anna", "Sergei",
             "Elena", "Andrew", "Olga", "Igor", "Tatiana"
     };
-
-    /**
-     * Возвращает случайное целое число в диапазоне [min, max] включительно.
-     * Использует стандартный безопасный подход через Random.nextInt().
-     */
     private int getRandomInt(int min, int max) {
         if (min > max) {
             throw new IllegalArgumentException("min (" + min + ") не может быть больше max (" + max + ")");
         }
         return random.nextInt(max - min + 1) + min;
     }
-
-    /**
-     * Возвращает случайное double число в диапазоне [min, max] с точностью до 3 знаков.
-     */
     private double getRandomDouble(double min, double max) {
         if (min > max) {
             throw new IllegalArgumentException("min (" + min + ") не может быть больше max (" + max + ")");
@@ -77,11 +73,6 @@ public class Generator {
         double value = random.nextDouble() * (max - min) + min;
         return Math.round(value * 1000.0) / 1000.0;
     }
-
-    /**
-     * Возвращает случайный элемент из массива строк.
-     * ИСПРАВЛЕНО: используем nextInt() для безопасного индекса.
-     */
     private String getRandomString(String[] lines) {
         if (lines == null || lines.length == 0) {
             throw new IllegalArgumentException("Массив строк не может быть пустым");
@@ -113,7 +104,7 @@ public class Generator {
                     Bus.builder()
                             .setNumber(String.valueOf(getRandomInt(BUS_NUMBER_MIN, BUS_NUMBER_MAX)))
                             .setModel(getRandomString(BUS_MODEL))
-                            .setMileage(getRandomInt((int) BUS_MILEAGE_MIN, (int) BUS_MILEAGE_MAX))
+                            .setMileage(getRandomInt(BUS_MILEAGE_MIN, BUS_MILEAGE_MAX))
                             .build()
             );
         }

@@ -1,6 +1,6 @@
 package dataSource.consoleReader;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import ivans.task.exceptions.InvalidInputException;
 import ivans.task.validators.manual.input.ManualInputValidator;
 
@@ -75,12 +75,12 @@ public class ConsoleReader {
         Scanner scanner = new Scanner(System.in);
         System.out.print(requestQuantity);
         int quantity = scanner.nextInt();
-        int number;
+        String number;
         String model;
         int mileage;
 
         for (int i = 1; i <= quantity; i++) {
-            number = readIntFromConsole(requestNumber, i, scanner);
+            number = readLineFromConsole(requestNumber, i, scanner);
             model = readLineFromConsole(requestModel, i, scanner);
             mileage = readIntFromConsole(requestMileage, i, scanner);
 

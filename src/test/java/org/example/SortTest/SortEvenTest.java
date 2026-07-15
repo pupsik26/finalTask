@@ -1,6 +1,6 @@
 package org.example.SortTest;
 
-import ModelBuilderClass.ModelClass.Bus;
+import daryaClassStream.ModelBuilderClass.Bus;
 import makarSorting.SortFacade;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import ModelBuilderClass.Builder.BusBuilder;
 
 class SortEvenTest {
 
@@ -19,27 +18,27 @@ class SortEvenTest {
     void shouldSortOnlyEvenNumbers() {
 
         List<Bus> buses = new ArrayList<>(List.of(
-                new BusBuilder().setNumber(7).setModel("A").setMileage(100).build(),
-                new BusBuilder().setNumber(8).setModel("B").setMileage(200).build(),
-                new BusBuilder().setNumber(3).setModel("C").setMileage(300).build(),
-                new BusBuilder().setNumber(4).setModel("D").setMileage(400).build(),
-                new BusBuilder().setNumber(2).setModel("E").setMileage(500).build(),
-                new BusBuilder().setNumber(5).setModel("F").setMileage(600).build()
+                Bus.builder().setNumber("7").setModel("A").setMileage(707).build(),
+                Bus.builder().setNumber("8").setModel("B").setMileage(808).build(),
+                Bus.builder().setNumber("3").setModel("C").setMileage(303).build(),
+                Bus.builder().setNumber("4").setModel("D").setMileage(404).build(),
+                Bus.builder().setNumber("2").setModel("E").setMileage(202).build(),
+                Bus.builder().setNumber("5").setModel("F").setMileage(505).build()
         ));
 
         Bus bus7 = buses.get(0);
         Bus bus3 = buses.get(2);
         Bus bus5 = buses.get(5);
 
-        facade.sortEven((List<Object>) (List<?>) buses, Bus.class, "number");
+        facade.sortEven((List<Object>) (List<?>) buses, Bus.class, "mileage");
+        assertEquals(707, buses.get(0).getMileage());
+        assertEquals(202, buses.get(1).getMileage());
+        assertEquals(303, buses.get(2).getMileage());
+        assertEquals(404, buses.get(3).getMileage());
+        assertEquals(808, buses.get(4).getMileage());
+        assertEquals(505, buses.get(5).getMileage());
 
-        assertEquals(7, buses.get(0).getNumber());
-        assertEquals(2, buses.get(1).getNumber());
-        assertEquals(3, buses.get(2).getNumber());
-        assertEquals(4, buses.get(3).getNumber());
-        assertEquals(8, buses.get(4).getNumber());
-        assertEquals(5, buses.get(5).getNumber());
-
+        // Объекты с нечетными mileage остались на своих местах
         assertSame(bus7, buses.get(0));
         assertSame(bus3, buses.get(2));
         assertSame(bus5, buses.get(5));
@@ -49,34 +48,32 @@ class SortEvenTest {
     void shouldSortWhenAllNumbersAreEven() {
 
         List<Bus> buses = new ArrayList<>(List.of(
-                new BusBuilder().setNumber(8).setModel("A").setMileage(100).build(),
-                new BusBuilder().setNumber(2).setModel("B").setMileage(200).build(),
-                new BusBuilder().setNumber(6).setModel("C").setMileage(300).build(),
-                new BusBuilder().setNumber(4).setModel("D").setMileage(400).build()
+                Bus.builder().setNumber("8").setModel("A").setMileage(800).build(),
+                Bus.builder().setNumber("2").setModel("B").setMileage(200).build(),
+                Bus.builder().setNumber("6").setModel("C").setMileage(600).build(),
+                Bus.builder().setNumber("4").setModel("D").setMileage(400).build()
         ));
 
-        facade.sortEven((List<Object>) (List<?>) buses, Bus.class, "number");
-
-        assertEquals(2, buses.get(0).getNumber());
-        assertEquals(4, buses.get(1).getNumber());
-        assertEquals(6, buses.get(2).getNumber());
-        assertEquals(8, buses.get(3).getNumber());
+        facade.sortEven((List<Object>) (List<?>) buses, Bus.class, "mileage");
+        assertEquals(200, buses.get(0).getMileage());
+        assertEquals(400, buses.get(1).getMileage());
+        assertEquals(600, buses.get(2).getMileage());
+        assertEquals(800, buses.get(3).getMileage());
     }
 
     @Test
     void shouldNotChangeListWhenAllNumbersAreOdd() {
 
         List<Bus> buses = new ArrayList<>(List.of(
-                new BusBuilder().setNumber(7).setModel("A").setMileage(100).build(),
-                new BusBuilder().setNumber(5).setModel("B").setMileage(200).build(),
-                new BusBuilder().setNumber(3).setModel("C").setMileage(300).build(),
-                new BusBuilder().setNumber(1).setModel("D").setMileage(400).build()
+                Bus.builder().setNumber("7").setModel("A").setMileage(101).build(),
+                Bus.builder().setNumber("5").setModel("B").setMileage(201).build(),
+                Bus.builder().setNumber("3").setModel("C").setMileage(301).build(),
+                Bus.builder().setNumber("1").setModel("D").setMileage(401).build()
         ));
 
         List<Bus> original = new ArrayList<>(buses);
 
-        facade.sortEven((List<Object>) (List<?>) buses, Bus.class, "number");
-
+        facade.sortEven((List<Object>) (List<?>) buses, Bus.class, "mileage");
         assertEquals(original, buses);
     }
 
@@ -84,7 +81,7 @@ class SortEvenTest {
     void shouldThrowExceptionForNonIntegerField() {
 
         List<Bus> buses = List.of(
-                new BusBuilder().setNumber(1).setModel("A").setMileage(100).build()
+                Bus.builder().setNumber("1").setModel("A").setMileage(100).build()
         );
 
         assertThrows(
@@ -97,7 +94,7 @@ class SortEvenTest {
     void shouldThrowExceptionForUnknownField() {
 
         List<Bus> buses = List.of(
-                new BusBuilder().setNumber(1).setModel("A").setMileage(100).build()
+                Bus.builder().setNumber("1").setModel("A").setMileage(100).build()
         );
 
         assertThrows(

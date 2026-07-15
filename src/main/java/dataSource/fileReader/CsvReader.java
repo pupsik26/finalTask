@@ -1,21 +1,28 @@
 package dataSource.fileReader;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 import ivans.task.validators.file.input.FileLineValidator;
 import ivans.task.validators.objects.ObjectValidatorFactory;
 
-import java.io.*;
-import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CsvReader {
+
     protected static List<Barrel> readBarrel(File file) throws IOException {
         List<Barrel> items = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
+            if (line == null) {
+                return items;
+            }
+
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int volumeIndex = Arrays.asList(fields).indexOf(HeadersConst.BARREL_VOLUME),
                     storedIndex = Arrays.asList(fields).indexOf(HeadersConst.BARREL_STORED),
@@ -35,7 +42,6 @@ public class CsvReader {
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
-
                 items.add(item);
                 line = br.readLine();
             }
@@ -47,8 +53,12 @@ public class CsvReader {
     protected static List<Bus> readBus(File file) throws IOException {
         List<Bus> items = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
+            if (line == null) {
+                return items;
+            }
+
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int mileageIndex = Arrays.asList(fields).indexOf(HeadersConst.BUS_MILEAGE),
                     modelIndex = Arrays.asList(fields).indexOf(HeadersConst.BUS_MODEL),
@@ -64,11 +74,10 @@ public class CsvReader {
                 Bus item = Bus.builder()
                         .setMileage(FileLineValidator.parseIntField(fields, mileageIndex, HeadersConst.BUS_MILEAGE))
                         .setModel(FileLineValidator.parseStringField(fields, modelIndex, HeadersConst.BUS_MODEL))
-                        .setNumber(String.valueOf(FileLineValidator.parseIntField(fields, numberIndex, HeadersConst.BUS_NUMBER)))
+                        .setNumber(FileLineValidator.parseStringField(fields, numberIndex, HeadersConst.BUS_NUMBER))
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
-
                 items.add(item);
                 line = br.readLine();
             }
@@ -80,8 +89,12 @@ public class CsvReader {
     protected static List<Car> readCar(File file) throws IOException {
         List<Car> items = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
+            if (line == null) {
+                return items;
+            }
+
             String[] fields = FileLineValidator.splitFields(line, 3);
 
             final int powerIndex = Arrays.asList(fields).indexOf(HeadersConst.CAR_POWER),
@@ -102,7 +115,6 @@ public class CsvReader {
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
-
                 items.add(item);
                 line = br.readLine();
             }
@@ -114,8 +126,12 @@ public class CsvReader {
     protected static List<Student> readStudent(File file) throws IOException {
         List<Student> items = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
+            if (line == null) {
+                return items;
+            }
+
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int groupNumberIndex = Arrays.asList(fields).indexOf(HeadersConst.STUDENT_GROUP),
                     gpaIndex = Arrays.asList(fields).indexOf(HeadersConst.STUDENT_GPA),
@@ -135,7 +151,6 @@ public class CsvReader {
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
-
                 items.add(item);
                 line = br.readLine();
             }
@@ -147,8 +162,12 @@ public class CsvReader {
     protected static List<User> readUser(File file) throws IOException {
         List<User> items = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
+            if (line == null) {
+                return items;
+            }
+
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int nameIndex = Arrays.asList(fields).indexOf(HeadersConst.USER_NAME),
                     passwordIndex = Arrays.asList(fields).indexOf(HeadersConst.USER_PASSWORD),
@@ -168,7 +187,6 @@ public class CsvReader {
                         .build();
 
                 ObjectValidatorFactory.getValidator().validate(item);
-
                 items.add(item);
                 line = br.readLine();
             }

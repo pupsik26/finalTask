@@ -1,6 +1,6 @@
 package makarSorting;
 
-import ModelBuilderClass.*;
+import daryaClassStream.ModelBuilderClass.*;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class ComparatorRegister {
             ),
             Student.class, Map.of(
                     "groupNumber", Comparator.comparing(Student::getGroupNumber),
-                    "gpa", Comparator.comparing(Student::getAverageGrade),
+                    "averageGrade", Comparator.comparing(Student::getAverageGrade),
                     "recordBookNumber", Comparator.comparing(Student::getRecordBookNumber)
             ),
             Car.class, Map.of(
@@ -36,9 +36,7 @@ public class ComparatorRegister {
             )
     );
 
-    public <T> Comparator<T> findComparator(Class<T> someClass,
-                                            String someField) {
-
+    public <T> Comparator<T> findComparator(Class<T> someClass, String someField) {
         Map<String, Comparator<?>> comparatorMap = registry.get(someClass);
 
         if (comparatorMap == null) {
