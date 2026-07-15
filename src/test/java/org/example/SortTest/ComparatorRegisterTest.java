@@ -1,5 +1,6 @@
 package org.example.SortTest;
 
+import daryaClassStream.ModelBuilderClass.User;
 import makarSorting.ComparatorRegister;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,6 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class ComparatorRegisterTest {
 
@@ -50,7 +50,7 @@ public class ComparatorRegisterTest {
                 .setPassword("456")
                 .setEmail("i@mail.com")
                 .build();
-
+        
         assertTrue(comparator.compare(alex, ivan) < 0);
     }
 }
