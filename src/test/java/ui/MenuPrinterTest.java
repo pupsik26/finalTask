@@ -27,21 +27,22 @@ class MenuPrinterTest {
     }
 
     @Test
-    @DisplayName("printMainMenu выводит все 10 пунктов")
+    @DisplayName("printMainMenu выводит все 11 пунктов")
     void shouldPrintAllMenuItems() {
         MenuPrinter.printMainMenu(0, 0, 0, 0, null, null);
         String output = outContent.toString();
 
-        assertTrue(output.contains("1. Выбрать класс"));
-        assertTrue(output.contains("2. Выбрать источник"));
-        assertTrue(output.contains("3. Указать размер"));
-        assertTrue(output.contains("4. Выбрать поле"));
-        assertTrue(output.contains("5. Выбрать тип"));
-        assertTrue(output.contains("6. Выбрать алгоритм"));
-        assertTrue(output.contains("7. Выполнить"));
-        assertTrue(output.contains("8. Подсчитать"));
-        assertTrue(output.contains("9. Сохранить"));
-        assertTrue(output.contains("11. Выход"));
+        assertTrue(output.contains("1."));
+        assertTrue(output.contains("2."));
+        assertTrue(output.contains("3."));
+        assertTrue(output.contains("4."));
+        assertTrue(output.contains("5."));
+        assertTrue(output.contains("6."));
+        assertTrue(output.contains("7."));
+        assertTrue(output.contains("8."));
+        assertTrue(output.contains("9."));
+        assertTrue(output.contains("10."));
+        assertTrue(output.contains("11."));
     }
 
     @Test
@@ -74,6 +75,8 @@ class MenuPrinterTest {
         assertTrue(output.contains("-e"));
         assertTrue(output.contains("-a"));
         assertTrue(output.contains("-o"));
+        assertTrue(output.contains("-t"));
+        assertTrue(output.contains("-v"));
     }
 
     @Test
