@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleReader {
+    private static String INCORRECT_DATA = "Неверные данные: ";
+
     private String readLineFromConsole(String request, int row, Scanner scanner) {
         do {
             System.out.printf(request, row);
             try {
                 return ManualInputValidator.requireNonBlank(scanner.nextLine(), "");
             } catch(InvalidInputException e) {
-                System.out.printf(e.getMessage());
+                System.out.printf(INCORRECT_DATA + e.getMessage() + "\n");
             }
         } while (true);
     }
@@ -26,7 +28,7 @@ public class ConsoleReader {
             try {
                 return ManualInputValidator.readInt(scanner.nextLine(), "");
             } catch(InvalidInputException e) {
-                System.out.printf(e.getMessage());
+                System.out.printf(INCORRECT_DATA + e.getMessage() + "\n");
             }
         } while (true);
     }
@@ -37,7 +39,18 @@ public class ConsoleReader {
             try {
                 return ManualInputValidator.readDouble(scanner.nextLine(), "");
             } catch(InvalidInputException e) {
-                System.out.printf(e.getMessage());
+                System.out.printf(INCORRECT_DATA + e.getMessage() + "\n");
+            }
+        } while (true);
+    }
+
+    private int readPositiveIntFromConsole(String request, int row, Scanner scanner) {
+        do {
+            System.out.printf(request, row);
+            try {
+                return ManualInputValidator.readPositiveInt(scanner.nextLine(), "");
+            } catch(InvalidInputException e) {
+                System.out.printf(INCORRECT_DATA + e.getMessage() + "\n");
             }
         } while (true);
     }
@@ -46,14 +59,13 @@ public class ConsoleReader {
         List<Barrel> barrels = new LinkedList<>();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print(requestQuantity);
-        int quantity = scanner.nextInt();
+        int quantity = readPositiveIntFromConsole(requestQuantity, 0, scanner);
         double volume;
         String storedMaterial;
         String material;
 
         for (int i = 1; i <= quantity; i++) {
-            volume = readDoubleFromConsole(requestVolume, i, scanner);
+            volume = readPositiveIntFromConsole(requestVolume, i, scanner);
             storedMaterial = readLineFromConsole(requestStoredMaterial, i, scanner);
             material = readLineFromConsole(requestMaterial, i, scanner);
 
@@ -73,8 +85,7 @@ public class ConsoleReader {
         List<Bus> busses = new LinkedList<>();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print(requestQuantity);
-        int quantity = scanner.nextInt();
+        int quantity = readPositiveIntFromConsole(requestQuantity, 0, scanner);
         String number;
         String model;
         int mileage;
@@ -82,7 +93,7 @@ public class ConsoleReader {
         for (int i = 1; i <= quantity; i++) {
             number = readLineFromConsole(requestNumber, i, scanner);
             model = readLineFromConsole(requestModel, i, scanner);
-            mileage = readIntFromConsole(requestMileage, i, scanner);
+            mileage = readPositiveIntFromConsole(requestMileage, i, scanner);
 
             busses.add(
                     Bus.builder()
@@ -100,14 +111,13 @@ public class ConsoleReader {
         List<Car> cars = new LinkedList<>();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print(requestQuantity);
-        int quantity = scanner.nextInt();
+        int quantity = readPositiveIntFromConsole(requestQuantity, 0, scanner);
         int power;
         String model;
         int year;
 
         for (int i = 1; i <= quantity; i++) {
-            power = readIntFromConsole(requestPower, i, scanner);
+            power = readPositiveIntFromConsole(requestPower, i, scanner);
             model = readLineFromConsole(requestModel, i, scanner);
             year = readIntFromConsole(requestYear, i, scanner);
 
@@ -127,8 +137,7 @@ public class ConsoleReader {
         List<Student> students = new LinkedList<>();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print(requestQuantity);
-        int quantity = scanner.nextInt();
+        int quantity = readPositiveIntFromConsole(requestQuantity, 0, scanner);
         String groupNumber;
         double gpa;
         String recordBookNumber;
@@ -154,8 +163,7 @@ public class ConsoleReader {
         List<User> users = new LinkedList<>();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print(requestQuantity);
-        int quantity = scanner.nextInt();
+        int quantity = readPositiveIntFromConsole(requestQuantity, 0, scanner);
         String name;
         String password;
         String email;
