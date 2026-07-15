@@ -37,11 +37,8 @@ class CommandParserTest {
             assertEquals(CommandAction.COUNT, cmd.getAction());
         }
 
-        @Test
-        void shouldParseSave() throws CommandParser.CommandParseException {
-            Command cmd = CommandParser.parse("save");
-            assertEquals(CommandAction.SAVE, cmd.getAction());
-        }
+        // Примечание: тест для 'save' удален, так как CommandAction.SAVE
+        // отсутствует в enum. Вместо него используется команда 'count' с флагами.
 
         @Test
         @DisplayName("Регистронезависимость: 'HELP' == 'help'")
@@ -88,17 +85,19 @@ class CommandParserTest {
         }
 
         @Test
-        @DisplayName("Парсит флаг -o (output)")
-        void shouldParseOutputFlag() throws CommandParser.CommandParseException {
-            Command cmd = CommandParser.parse("save -o result.csv");
-            assertEquals("result.csv", cmd.getOutputPath().orElse(""));
-        }
-
-        @Test
         @DisplayName("Парсит флаг -p (path)")
         void shouldParsePathFlag() throws CommandParser.CommandParseException {
             Command cmd = CommandParser.parse("start -c 3 -s 3 -p data.csv -n 5 -f 1 -a 1");
             assertEquals("data.csv", cmd.getFilePath().orElse(""));
+        }
+
+        @Test
+        @DisplayName("Парсит флаги -t (threads) и -v (value) для команды count")
+        void shouldParseThreadAndValueFlags() throws CommandParser.CommandParseException {
+            // ЗАМЕНЕНО: вместо outputPath тестируем реальные поля threadCount и searchValue
+            Command cmd = CommandParser.parse("count -t 8 -v \"Car{power=150}\"");
+            assertEquals(8, cmd.getThreadCount().orElse(0));
+            assertEquals("Car{power=150}", cmd.getSearchValue().orElse(""));
         }
 
         @Test
@@ -165,4 +164,3 @@ class CommandParserTest {
                     () -> CommandParser.parse("start -c 1 extra"));
         }
     }
-}
