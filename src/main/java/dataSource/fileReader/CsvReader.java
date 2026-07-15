@@ -17,10 +17,11 @@ public class CsvReader {
     protected static List<Barrel> readBarrel(File file) throws IOException {
         List<Barrel> items = new LinkedList<>();
 
-        // ИСПРАВЛЕНО: Используем современный и безопасный способ чтения файла
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
-            if (line == null) return items;
+            if (line == null) {
+                return items;
+            }
 
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int volumeIndex = Arrays.asList(fields).indexOf(HeadersConst.BARREL_VOLUME),
@@ -54,7 +55,9 @@ public class CsvReader {
 
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
-            if (line == null) return items;
+            if (line == null) {
+                return items;
+            }
 
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int mileageIndex = Arrays.asList(fields).indexOf(HeadersConst.BUS_MILEAGE),
@@ -88,7 +91,9 @@ public class CsvReader {
 
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
-            if (line == null) return items;
+            if (line == null) {
+                return items;
+            }
 
             String[] fields = FileLineValidator.splitFields(line, 3);
 
@@ -123,7 +128,9 @@ public class CsvReader {
 
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
-            if (line == null) return items;
+            if (line == null) {
+                return items;
+            }
 
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int groupNumberIndex = Arrays.asList(fields).indexOf(HeadersConst.STUDENT_GROUP),
@@ -157,7 +164,9 @@ public class CsvReader {
 
         try (BufferedReader br = Files.newBufferedReader(file.toPath())) {
             String line = br.readLine();
-            if (line == null) return items;
+            if (line == null) {
+                return items;
+            }
 
             String[] fields = FileLineValidator.splitFields(line, 3);
             final int nameIndex = Arrays.asList(fields).indexOf(HeadersConst.USER_NAME),

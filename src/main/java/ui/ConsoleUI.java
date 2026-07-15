@@ -4,7 +4,7 @@ import daryaClassStream.ModelBuilderClass.*;
 import dataSource.consoleReader.ConsoleReader;
 import dataSource.fileReader.FileReader;
 import dataSource.randomData.Generator;
-import fileWriter.FileWriter;
+import fileWriter.FileWriter; // Убедитесь, что этот пакет существует в вашем проекте
 import makarSorting.EvenFieldSorter;
 import makarSorting.SortFacade;
 import makarSorting.Strategy.MergeSortStrategy;
@@ -43,7 +43,7 @@ public class ConsoleUI {
         this.sortFacade = new SortFacade();
         this.evenFieldSorter = new EvenFieldSorter();
         this.elementCounter = new ElementCounter();
-        this.fileWriter = new FileWriter(); // Теперь это поле инициализируется корректно
+        this.fileWriter = new FileWriter();
         this.currentData = new ArrayList<>();
         this.selectedSortType = SortType.NORMAL;
         this.selectedAlgorithm = SortAlgorithm.SMART;
@@ -90,7 +90,7 @@ public class ConsoleUI {
             }
 
             if (command.isExit()) {
-                System.out.println("\n До свидания!");
+                System.out.println("\nДо свидания!"); // Исправлен лишний пробел
                 return false;
             }
 
@@ -112,7 +112,7 @@ public class ConsoleUI {
                 return handleCountCommand(command);
             }
 
-            if (command.getAction() == CommandAction.STREAM_DEMO) { // Убедитесь, что STREAM_DEMO есть в enum CommandAction
+            if (command.getAction() == CommandAction.STREAM_DEMO) {
                 handleStreamDemo();
                 return true;
             }
@@ -162,7 +162,10 @@ public class ConsoleUI {
             targetValue = scanner.nextLine().trim();
         }
 
-        if (threads <= 0) threads = 4;
+        // ✅ ИСПРАВЛЕНО: Добавлены фигурные скобки для Checkstyle (NeedBraces)
+        if (threads <= 0) {
+            threads = 4;
+        }
 
         executeCount(targetValue, threads);
         return true;
@@ -215,7 +218,7 @@ public class ConsoleUI {
             return;
         }
 
-        System.out.println("\n Подсказка: скопируйте строку элемента из результата сортировки выше.");
+        System.out.println("\n💡 Подсказка: скопируйте строку элемента из результата сортировки выше."); // Исправлен пробел
         System.out.print("Введите строковое представление элемента для поиска: ");
         String targetValue = scanner.nextLine().trim();
 
@@ -298,7 +301,10 @@ public class ConsoleUI {
                 case 8 -> { handleCountExecution(); yield true; }
                 case 9 -> { handleSaveExecution(); yield true; }
                 case 10 -> { handleStreamDemo(); yield true; }
-                case 11 -> { System.out.println("\n До свидания!"); yield false; }
+                case 11 -> {
+                    System.out.println("\nДо свидания!"); // Исправлен лишний пробел
+                    yield false;
+                }
                 default -> {
                     MenuPrinter.printError("Выберите пункт от 1 до 11");
                     yield true;
@@ -311,8 +317,8 @@ public class ConsoleUI {
     }
 
     private void handleStreamDemo() {
-        System.out.println("\n Запуск демонстрации Stream API...");
-        System.out.println("ВНИМАНИЕ: Для работы требуются файлы:");
+        System.out.println("\n🚀 Запуск демонстрации Stream API..."); // Исправлен лишний пробел
+        System.out.println("⚠️ ВНИМАНИЕ: Для работы требуются файлы:");
         System.out.println("   - student.json, car.json, bus.json, barrel.json, user.json");
         System.out.println("   Расположенные в: src/main/dataSource/fileReader/examples/\n");
 
@@ -618,7 +624,7 @@ public class ConsoleUI {
     private String getFieldName(int classType, int fieldIndex) {
         String[] fields = switch (classType) {
             case 1 -> new String[]{"name", "password", "email"};
-            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"};
+            case 2 -> new String[]{"groupNumber", "gpa", "recordBookNumber"}; // "gpa" соответствует ComparatorRegister
             case 3 -> new String[]{"power", "model", "year"};
             case 4 -> new String[]{"number", "model", "mileage"};
             case 5 -> new String[]{"volume", "storedMaterial", "material"};
